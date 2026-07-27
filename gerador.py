@@ -39,7 +39,8 @@ def criar_imagem_produto(caminho_produto, titulo, preco, caminho_salvamento):
         fonte_cta = ImageFont.load_default()
 
     # 5. Adicionar os textos na imagem
-    draw.text((largura_canvas // 2, 80), titulo, fill=(50, 50, 50), font=fonte_titulo, anchor="mm")
+        # 5. Adicionar os textos na imagem (Título ajustado para a posição 120 para não cortar no topo)
+    draw.text((largura_canvas // 2, 120), titulo, fill=(50, 50, 50), font=fonte_titulo, anchor="mm")
     draw.text((largura_canvas // 2, 880), f"Apenas: {preco}", fill=(225, 115, 0), font=fonte_preco, anchor="mm")
     draw.text((largura_canvas // 2, 980), "Clique no link para aproveitar!", fill=(100, 100, 100), font=fonte_cta, anchor="mm")
     
