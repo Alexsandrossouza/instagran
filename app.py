@@ -89,22 +89,15 @@ else:
         st.markdown(f"<h3 class='secao-texto'>📖 {prod['titulo']}</h3>", unsafe_allow_html=True)
         st.markdown(f"<p class='preco-texto'>Apenas: R$ {prod['preco']}</p>", unsafe_allow_html=True)
         
-        # SOLUÇÃO DE FORÇA BRUTA: Se o link salvo estiver errado, nós extraímos o código (ASIN/ISBN)
-        # que está no nome da imagem do anúncio (ex: anuncio_6553934800.jpg) para recriar o link com o /dp/ perfeito!
         nome_imagem = prod.get("imagem_instagram", "")
         if "anuncio_" in nome_imagem:
             asin_limpo = nome_imagem.replace("anuncio_", "").replace(".jpg", "")
-            link_perfeito = f"https://www.amazon.com.br/dp/{asin_limpo}?tag=abielstore-20"
+            link_perfeito = f"https://amazon.com.br{asin_limpo}?tag=abielstore-20"
         else:
-            # Caso não encontre a imagem, usa o link salvo original
             link_perfeito = prod['link']
 
-        # Cria o botão usando a URL montada manualmente com o /dp/ obrigatório
         st.link_button(label="👉 Ver na Amazon", url=link_perfeito, use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
-
-
-
 
 st.markdown("<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar através dos links acima, eu ganho uma pequena comissão da Amazon. 💕</p>", unsafe_allow_html=True)
 
@@ -117,15 +110,32 @@ if abrir_painel:
     if senha == "cris123": 
         st.success("Acesso liberado!")
         
+        # --- SUB-ABA: EXCLUIR ITENS EXISTENTES ---
+        if produtos:
+            st.subheader("🗑️ Gerenciar/Apagar Produtos Cadastrados")
+            for i, prod in enumerate(produtos):
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    st.write(f"**{prod['titulo']}** - R$ {prod['preco']}")
+                with col2:
+                    # Botão individual para deletar o item da lista
+                    if st.button("Apagar", key=f"del_{i}"):
+                        produtos.pop(i)
+                        if salvar_produtos_github(produtos):
+                            st.toast("Item removido com sucesso!")
+                            st.rerun()
+            st.markdown("<hr>", unsafe_allow_html=True)
+
+        # --- FORMULÁRIO DE CADASTRO ---
+        st.subheader("➕ Adicionar Novo Achadinho")
         with st.form("cadastro_produto", clear_on_submit=True):
             novo_titulo = st.text_input("Título do Produto:")
-            novo_preco = st.text_input("Preço (Ex: 38,75):")
+            novo_preco = st.text_input("Preço (Ex: 52,40):")
             novo_asin = st.text_input("Código do Produto na Amazon (ASIN ou ISBN):").strip().replace(" ", "")
             foto_upload = st.file_uploader("Escolha a foto do produto:", type=["webp", "jpg", "jpeg", "png"])
             botao_salvar = st.form_submit_button("Salvar Produto")
             
             if botao_salvar and novo_titulo and novo_preco and novo_asin:
-                # FÓRMULA CORRIGIDA NO LUGAR CERTO: Dentro do bloco de salvamento
                 link_automatizado = f"https://amazon.com.br{novo_asin}?tag=abielstore-20"
                 nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
                 
