@@ -91,7 +91,7 @@ st.markdown("<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao
 st.markdown("<hr style='border: 0; height: 1px; background: #E0E0E0; margin: 20px 0;'>", unsafe_allow_html=True)
 st.markdown("<p class='subtitulo' style='font-size: 14px;'>Ficou com alguma dúvida ou quer bater um papo?</p>", unsafe_allow_html=True)
 
-NUMERO_WHATSAPP = "5511999999999" 
+NUMERO_WHATSAPP = "5548988480217" 
 url_whatsapp = f"https://wa.me{NUMERO_WHATSAPP}?text=Olá,%20Cris!%20Vi%20um%20produto%20no%20seu%20site%20e%20gostaria%20de%20tirar%20uma%20dúvida."
 st.link_button(label="💬 Chamar a Cris no WhatsApp", url=url_whatsapp, use_container_width=True)
 
