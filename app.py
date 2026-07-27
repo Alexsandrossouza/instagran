@@ -52,7 +52,7 @@ st.markdown("<hr style='border: 0; height: 1px; background: #6C8EBF; margin-bott
 # BOTÃO 1: O Livro "Perfeitamente Diferentes"
 st.markdown("<h3>📖 Sugestão de Leitura Cristã</h3>", unsafe_allow_html=True)
 if st.button("👉 Ver Livro Perfeitamente Diferentes na Amazon"):
-    st.markdown('<meta http-equiv="refresh" content="0;URL=\'https://a.co/d/0cPSR7aq\'">', unsafe_allow_html=True)
+        st.link_button("👉 Ver Livro Perfeitamente Diferentes na Amazon", "https://a.co/d/0cPSR7aq")
 
 # Rodapé obrigatório da Amazon
 st.markdown("<br><br><br>", unsafe_allow_html=True)
