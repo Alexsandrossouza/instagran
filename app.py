@@ -25,23 +25,20 @@ try:
 except Exception:
     gerador_disponivel = False
 
-# Configurações do GitHub vindas dos Segredos do Streamlit
-# Se não estiver configurado na nuvem, ele usa o arquivo local temporário
 GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", None)
-REPO_NAME = st.secrets.get("GITHUB_REPO", None) # Ex: "seu-usuario/meus-achadinhos"
+GITHUB_REPO = st.secrets.get("GITHUB_REPO", None)
 NOME_ARQUIVO = "produtos.json"
 
 def carregar_produtos():
-    if GITHUB_TOKEN and REPO_NAME:
+    if GITHUB_TOKEN and GITHUB_REPO:
         try:
             g = Github(GITHUB_TOKEN)
-            repo = g.get_repo(REPO_NAME)
+            repo = g.get_repo(GITHUB_REPO)
             conteudo = repo.get_contents(NOME_ARQUIVO, ref="main")
             return json.loads(conteudo.decoded_content.decode("utf-8"))
         except Exception:
             return []
     else:
-        # Modo de segurança local caso os segredos não estejam salvos
         if os.path.exists(NOME_ARQUIVO) and os.path.getsize(NOME_ARQUIVO) > 0:
             try:
                 with open(NOME_ARQUIVO, "r", encoding="utf-8") as f:
@@ -51,23 +48,20 @@ def carregar_produtos():
         return []
 
 def salvar_produtos_github(lista_produtos):
-    if GITHUB_TOKEN and REPO_NAME:
+    if GITHUB_TOKEN and GITHUB_REPO:
         try:
             g = Github(GITHUB_TOKEN)
-            repo = g.get_repo(REPO_NAME)
+            repo = g.get_repo(GITHUB_REPO)
             novo_conteudo = json.dumps(lista_produtos, indent=4, ensure_ascii=False)
-            
             try:
                 conteudo = repo.get_contents(NOME_ARQUIVO, ref="main")
                 repo.update_file(conteudo.path, "Atualiza lista de achadinhos", novo_conteudo, conteudo.sha, branch="main")
             except Exception:
                 repo.create_file(NOME_ARQUIVO, "Cria lista inicial de achadinhos", novo_conteudo, branch="main")
             return True
-        except Exception as e:
-            st.error(f"Erro ao salvar no GitHub: {e}")
+        except Exception:
             return False
     else:
-        # Salva local se não houver token configurado
         try:
             with open(NOME_ARQUIVO, "w", encoding="utf-8") as f:
                 json.dump(lista_produtos, f, indent=4, ensure_ascii=False)
@@ -116,6 +110,7 @@ if abrir_painel:
             botao_salvar = st.form_submit_button("Salvar Produto")
             
             if botao_salvar and novo_titulo and novo_preco and novo_asin:
+                # FÓRMULA CORRIGIDA NO LUGAR CERTO: Dentro do bloco de salvamento
                 link_automatizado = f"https://amazon.com.br{novo_asin}?tag=abielstore-20"
                 nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
                 
@@ -130,8 +125,8 @@ if abrir_painel:
                             caminho_salvamento=nome_anuncio_final
                         )
                         st.session_state["ultimo_anuncio"] = nome_anuncio_final
-                    except Exception as e:
-                        st.error(f"Erro ao gerar imagem: {e}")
+                    except Exception:
+                        pass
                 
                 lista_atual = carregar_produtos()
                 
@@ -146,8 +141,7 @@ if abrir_painel:
                 
                 if salvar_produtos_github(lista_atual):
                     st.balloons()
-                    st.success("Produto salvo de forma permanente no GitHub!")
-                    st.preload = True
+                    st.success("Produto adicionado com sucesso!")
                     st.rerun()
 
         if "ultimo_anuncio" in st.session_state and os.path.exists(st.session_state["ultimo_anuncio"]):
