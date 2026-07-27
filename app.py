@@ -3,7 +3,7 @@ import streamlit as st
 # Configuração da página
 st.set_page_config(page_title="Achadinhos da Cris", page_icon="📚", layout="centered")
 
-# Estilização do fundo da página
+# Estilização
 st.markdown("""
     <style>
     .stApp {
@@ -26,7 +26,6 @@ st.markdown("<hr style='border: 0; height: 1px; background: #6C8EBF; margin-bott
 # --- BOTÃO DE LINK DIRETO (HTML) ---
 st.markdown("<h3>📖 Sugestão de Leitura Cristã</h3>", unsafe_allow_html=True)
 
-# Link direto em HTML estilizado
 link_amazon = "https://a.co/d/0cPSR7aq"
 
 st.markdown(f'''
@@ -42,7 +41,6 @@ st.markdown(f'''
             text-decoration: none;
             border-radius: 8px;
             box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-            transition: 0.3s;
         ">
             👉 Ver Livro Perfeitamente Diferentes na Amazon
         </a>
