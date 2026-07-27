@@ -151,35 +151,27 @@ else:
             unsafe_allow_html=True,
         )
 
-        # 📸 LÓGICA COMPLETA DE IMAGEM
-        nome_imagem = prod.get("imagem_instagram", "")
-        
-        # 1. Tenta carregar se a imagem existir salva na pasta local
-        if nome_imagem and os.path.exists(nome_imagem):
-            st.image(nome_imagem, use_container_width=True)
-            
-        # 2. Se for um anúncio pelo ASIN, pega da Amazon
-        elif "anuncio_" in nome_imagem:
-            asin = (
-                nome_imagem.replace("anuncio_", "")
+        # 📸 Pega o ASIN salvo ou extrai do nome do anúncio
+        asin_produto = prod.get("asin", "")
+        if not asin_produto:
+            nome_img = prod.get("imagem_instagram", "")
+            asin_produto = (
+                nome_img.replace("anuncio_", "")
                 .replace(".jpg", "")
                 .replace(".png", "")
             )
-            url_amazon = f"https://images-na.ssl-images-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
-            st.image(url_amazon, use_container_width=True)
-            
-        # 3. Tenta extrair o ASIN direto do link se nada acima funcionar
-        else:
-            link = prod.get("link", "")
-            if "/dp/" in link:
-                try:
-                    asin_link = link.split("/dp/")[1].split("?")[0].replace("/", "")
-                    url_amazon_fallback = f"https://images-na.ssl-images-amazon.com/images/P/{asin_link}.01.LZZZZZZZ.jpg"
-                    st.image(url_amazon_fallback, use_container_width=True)
-                except Exception:
-                    pass
 
-        # 🔗 BOTÃO DE COMPRA
+        # 1. Se existir o arquivo gerado localmente na pasta, exibe ele
+        nome_imagem = prod.get("imagem_instagram", "")
+        if nome_imagem and os.path.exists(nome_imagem):
+            st.image(nome_imagem, use_container_width=True)
+
+        # 2. Caso contrário, puxa a capa oficial diretamente dos servidores da Amazon
+        elif asin_produto and len(asin_produto) >= 8:
+            url_capa_amazon = f"https://images-na.ssl-images-amazon.com/images/P/{asin_produto}.01.LZZZZZZZ.jpg"
+            st.image(url_capa_amazon, use_container_width=True)
+
+        # 🔗 Botão do Link
         link_perfeito = prod.get("link", "#")
         st.link_button(
             label="👉 Ver na Amazon",
@@ -279,6 +271,7 @@ if abrir_painel:
                     "preco": novo_preco,
                     "link": link_automatizado,
                     "imagem_instagram": nome_anuncio_final,
+                    "asin": novo_asin,  # <--- Linha nova adicionada!
                 }
                 lista_atual.append(novo_item)
 
