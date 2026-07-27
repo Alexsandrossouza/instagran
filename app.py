@@ -8,7 +8,7 @@ st.set_page_config(page_title="Achadinhos da Cris", page_icon="📚", layout="ce
 
 st.markdown("""
     <style>
-    .stApp { background-color: #FDFBF7; }
+    .stApp { background-color: #d4aebe; }
     .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -90,7 +90,7 @@ else:
 st.markdown("<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar através dos links acima, eu ganho uma pequena comissão da Amazon. 💕</p>", unsafe_allow_html=True)
 
 # Contato do WhatsApp
-st.markdown("<hr style='border: 0; height: 1px; background: #E0E0E0; margin: 20px 0;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 0; height: 1px; background: #a8406b; margin: 20px 0;'>", unsafe_allow_html=True)
 st.markdown("<p class='subtitulo' style='font-size: 14px;'>Ficou com alguma dúvida ou quer bater um papo?</p>", unsafe_allow_html=True)
 
 NUMERO_WHATSAPP = "5548988480217" 
