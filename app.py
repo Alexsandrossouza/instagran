@@ -18,23 +18,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Tenta importar o gerador com segurança para o servidor não travar
 try:
     from gerador import criar_imagem_produto
     gerador_disponivel = True
 except Exception as e:
     gerador_disponivel = False
 
-# Caminho seguro para o banco de dados funcionar no servidor
 ARQUIVO_BANCO = os.path.join(os.getcwd(), "produtos.json")
 
-# Força a criação do arquivo de texto caso ele não exista
 if not os.path.exists(ARQUIVO_BANCO):
     try:
         with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
             json.dump([], f)
-    except Exception as e:
-        st.error(f"Erro ao inicializar banco de dados: {e}")
+    except Exception:
+        pass
 
 def carregar_produtos():
     if os.path.exists(ARQUIVO_BANCO):
@@ -52,14 +49,12 @@ st.markdown("<hr style='border: 0; height: 1px; background: #6C8EBF; margin: 20p
 
 produtos = carregar_produtos()
 
-# Se não tiver produtos cadastrados no arquivo, mostra o produto padrão de teste com o link corrigido
 if not produtos:
     st.markdown("<h3 class='secao-texto'>📖 Sugestão de Leitura Cristã</h3>", unsafe_allow_html=True)
-    st.markdown("<p class='preco-texto'>Apenas: R$ 45,90</p>", unsafe_allow_html=True)
-    # Link real e completo da Amazon para o botão funcionar no teste
+    st.markdown("<p class='preco-texto'>Apenas: R$ 38,75</p>", unsafe_allow_html=True)
     st.link_button(
         label="👉 Ver Livro Perfeitamente Diferentes na Amazon", 
-        url="https://a.co/d/0cPSR7aq", 
+        url="https://amazon.com.br", 
         use_container_width=True
     )
 else:
@@ -80,17 +75,19 @@ if abrir_painel:
     if senha == "cris123": 
         st.success("Acesso liberado!")
         
-        if not gerador_disponivel:
-            st.warning("Atenção: O gerador de imagens do Instagram está temporariamente indisponível no servidor, mas você ainda pode listar produtos.")
-        
         with st.form("cadastro_produto", clear_on_submit=True):
-            novo_titulo = st.text_input("Título do Produto:")
-            novo_preco = st.text_input("Preço (Ex: R$ 149,90):")
-            novo_link = st.text_input("Link de Afiliado Amazon:")
+            novo_titulo = st.text_input("Título do Produto (Ex: Livro Perfeitamente Diferentes):")
+            novo_preco = st.text_input("Preço (Ex: R$ 38,75):")
+            
+            # NOVO CAMPO OTIMIZADO: Só o código final da URL
+            novo_asin = st.text_input("Código do Produto na Amazon (ASIN - Ex: B0F3R86YGG):").strip()
+            
             foto_upload = st.file_uploader("Escolha a foto do produto:", type=["webp", "jpg", "jpeg", "png"])
             botao_salvar = st.form_submit_button("Salvar Produto")
             
-            if botao_salvar and novo_titulo and novo_preco and novo_link:
+            if botao_salvar and novo_titulo and novo_preco and novo_asin:
+                # O PYTHON MONTA O LINK SOZINHO AQUI COM A SUA IDENTIFICAÇÃO DE LOJA
+                link_automatizado = f"https://amazon.com.br/{novo_asin}/?tag=abielstore-20"
                 nome_anuncio_final = ""
                 
                 if foto_upload and gerador_disponivel:
@@ -114,7 +111,7 @@ if abrir_painel:
                 novo_item = {
                     "titulo": novo_titulo,
                     "preco": novo_preco,
-                    "link": novo_link,
+                    "link": link_automatizado, # Salva o link completo montado pelo robô
                     "imagem_instagram": nome_anuncio_final
                 }
                 
@@ -123,7 +120,7 @@ if abrir_painel:
                     with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
                         json.dump(produtos, f, indent=4, ensure_ascii=False)
                     st.balloons()
-                    st.success("Sucesso! Produto cadastrado!")
+                    st.success(f"Sucesso! Link automatizado gerado: {link_automatizado}")
                     st.rerun()
                 except Exception as e:
-                    st.error(f"Erro ao salvar produto no arquivo: {e}")
+                    st.error(f"Erro ao salvar: {e}")
