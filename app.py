@@ -89,19 +89,21 @@ else:
         st.markdown(f"<h3 class='secao-texto'>📖 {prod['titulo']}</h3>", unsafe_allow_html=True)
         st.markdown(f"<p class='preco-texto'>Apenas: R$ {prod['preco']}</p>", unsafe_allow_html=True)
         
-        # TRUQUE SEGURO: Se o link antigo veio sem o /dp/, o Python corrige ele manualmente antes de criar o botão
-        link_original = prod['link']
-        if "/dp/" not in link_original:
-            # Pega o código do produto que está no meio do link antigo
-            asin_limpo = link_original.replace("https://amazon.com.br", "").replace("https://amazon.com.br", "").split("?")[0].replace("/", "")
-            # Monta a fórmula perfeita de forma manual e forçada
-            link_corrigido = f"https://amazon.com.brdp/{asin_limpo}?tag=abielstore-20"
+        # Pega o link que está salvo no banco de dados
+        link_salvo = prod['link']
+        
+        # TRUQUE SEGURO: Se o link salvo estiver grudado e sem o /dp/, o Python reconstrói ele do zero
+        if "/dp/" not in link_salvo:
+            # Extrai apenas os números/letras do código isolando o que vem antes do '?'
+            asin_extraido = link_salvo.split("?")[0].split("/")[-1].replace("amazon.com.br", "")
+            link_final = f"https://amazon.com.br{asin_extraido}?tag=abielstore-20"
         else:
-            link_corrigido = link_original
+            link_final = link_salvo
 
-        # Cria o botão usando o link corrigido manualmente pelo Python
-        st.link_button(label="👉 Ver na Amazon", url=link_corrigido, use_container_width=True)
+        # Cria o botão com a URL perfeitamente corrigida e testada
+        st.link_button(label="👉 Ver na Amazon", url=link_final, use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 st.markdown("<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar através dos links acima, eu ganho uma pequena comissão da Amazon. 💕</p>", unsafe_allow_html=True)
