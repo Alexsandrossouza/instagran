@@ -62,7 +62,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<h3>🎮 Meu Cantinho Gamer / Tech</h3>", unsafe_allow_html=True)
 if st.button("👉 Ver Bateria para Controle de Xbox na Amazon"):
     # Substitua pelo seu link de afiliado da Amazon gerado no SiteStripe
-    st.markdown('<meta http-equiv="refresh" content="0;URL=\'https://amzn.to\'">', unsafe_allow_html=True)
+    st.markdown('<meta http-equiv="refresh" content="0;URL=\'https://www.amazon.com.br/Seguran%C3%A7a-Bidirecional-Rastreamento-Autom%C3%A1tico-Compat%C3%ADvel/dp/B0H5L5MTSQ/ref=pd_rhf_gw_s_pd_crcd_d_sccl_1_2/145-8498386-9315941?psc=1\'">', unsafe_allow_html=True)
 
 # Rodapé delicado
 st.markdown("<br><br><br>", unsafe_allow_html=True)
