@@ -68,17 +68,24 @@ if not produtos:
     st.markdown("<p class='preco-texto'>Apenas: R$ 38,75</p>", unsafe_allow_html=True)
     st.link_button(label="👉 Ver Livro Perfeitamente Diferentes na Amazon", url="https://amazon.com.br", use_container_width=True)
 else:
+    
+
+
     for prod in reversed(produtos):
         st.markdown(f"<h3 class='secao-texto'>📖 {prod['titulo']}</h3>", unsafe_allow_html=True)
         st.markdown(f"<p class='preco-texto'>Apenas: R$ {prod['preco']}</p>", unsafe_allow_html=True)
         
-        # CORREÇÃO DEFINITIVA NA EXIBIÇÃO: Extrai o código numérico de qualquer link antigo e monta com o /dp/ obrigatório
-        link_banco = prod['link']
-        codigo_limpo = link_banco.replace("https://amazon.com.br", "").replace("https://amazon.com.br", "").split("?")[0].replace("dp", "").replace("/", "")
-        link_corrigido_final = f"https://amazon.com.brdp/{codigo_limpo}?tag=abielstore-20"
+        nome_imagem = prod.get("imagem_instagram", "")
+        if "anuncio_" in nome_imagem:
+            asin_limpo = nome_imagem.replace("anuncio_", "").replace(".jpg", "")
+            link_perfeito = f"https://amazon.com.br{asin_limpo}?tag=abielstore-20"
+        else:
+            link_perfeito = prod['link']
 
-        st.link_button(label="👉 Ver na Amazon", url=link_corrigido_final, use_container_width=True)
+        st.link_button(label="👉 Ver na Amazon", url=link_perfeito, use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
+
+        
 
 st.markdown("<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar através dos links acima, eu ganho uma pequena comissão da Amazon. 💕</p>", unsafe_allow_html=True)
 
