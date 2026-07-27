@@ -24,9 +24,10 @@ try:
 except Exception as e:
     gerador_disponivel = False
 
+# Caminho absoluto para persistência dos dados no servidor
 ARQUIVO_BANCO = os.path.join(os.getcwd(), "produtos.json")
 
-if not os.path.exists(ARQUIVO_BANCO):
+if not os.path.exists(ARQUIVO_BANCO) or os.path.getsize(ARQUIVO_BANCO) == 0:
     try:
         with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
             json.dump([], f)
@@ -37,7 +38,9 @@ def carregar_produtos():
     if os.path.exists(ARQUIVO_BANCO):
         try:
             with open(ARQUIVO_BANCO, "r", encoding="utf-8") as f:
-                return json.load(f)
+                dados = json.load(f)
+                if isinstance(dados, list):
+                    return dados
         except Exception:
             return []
     return []
@@ -60,7 +63,7 @@ if not produtos:
 else:
     for prod in reversed(produtos):
         st.markdown(f"<h3 class='secao-texto'>📖 {prod['titulo']}</h3>", unsafe_allow_html=True)
-        st.markdown(f"<p class='preco-texto'>Apenas: {prod['preco']}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p class='preco-texto'>Apenas: R$ {prod['preco']}</p>", unsafe_allow_html=True)
         st.link_button(label="👉 Ver na Amazon", url=prod['link'], use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -76,51 +79,61 @@ if abrir_painel:
         st.success("Acesso liberado!")
         
         with st.form("cadastro_produto", clear_on_submit=True):
-            novo_titulo = st.text_input("Título do Produto (Ex: Livro Perfeitamente Diferentes):")
-            novo_preco = st.text_input("Preço (Ex: R$ 38,75):")
-            
-            # NOVO CAMPO OTIMIZADO: Só o código final da URL
-            novo_asin = st.text_input("Código do Produto na Amazon (ASIN - Ex: B0F3R86YGG):").strip()
-            
+            novo_titulo = st.text_input("Título do Produto:")
+            novo_preco = st.text_input("Preço (Ex: 38,75):")
+            novo_asin = st.text_input("Código do Produto na Amazon (ASIN ou ISBN):").strip().replace(" ", "")
             foto_upload = st.file_uploader("Escolha a foto do produto:", type=["webp", "jpg", "jpeg", "png"])
             botao_salvar = st.form_submit_button("Salvar Produto")
             
             if botao_salvar and novo_titulo and novo_preco and novo_asin:
-                # O PYTHON MONTA O LINK SOZINHO AQUI COM A SUA IDENTIFICAÇÃO DE LOJA
-                link_automatizado = f"https://amazon.com.br/{novo_asin}/?tag=abielstore-20"
-                nome_anuncio_final = ""
+                # CORREÇÃO CRUCIAL: Inserido a estrutura /dp/ obrigatória para o link funcionar na Amazon
+                link_automatizado = f"https://amazon.com.br{novo_asin}?tag=abielstore-20"
+                nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
                 
                 if foto_upload and gerador_disponivel:
-                    nome_imagem_original = foto_upload.name
-                    with open(nome_imagem_original, "wb") as f:
+                    with open("temp_original.jpg", "wb") as f:
                         f.write(foto_upload.getbuffer())
-                    
-                    nome_sem_extensao = os.path.splitext(nome_imagem_original)[0]
-                    nome_anuncio_final = f"anuncio_{nome_sem_extensao}.jpg"
                     
                     try:
                         criar_imagem_produto(
-                            caminho_produto=nome_imagem_original,
+                            caminho_produto="temp_original.jpg",
                             titulo=novo_titulo,
-                            preco=novo_preco,
+                            preco=f"R$ {novo_preco}",
                             caminho_salvamento=nome_anuncio_final
                         )
+                        st.session_state["ultimo_anuncio"] = nome_anuncio_final
                     except Exception as e:
                         st.error(f"Erro ao gerar imagem: {e}")
+                
+                lista_atual = carregar_produtos()
                 
                 novo_item = {
                     "titulo": novo_titulo,
                     "preco": novo_preco,
-                    "link": link_automatizado, # Salva o link completo montado pelo robô
+                    "link": link_automatizado,
                     "imagem_instagram": nome_anuncio_final
                 }
                 
-                produtos.append(novo_item)
+                lista_atual.append(novo_item)
+                
                 try:
                     with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
-                        json.dump(produtos, f, indent=4, ensure_ascii=False)
+                        json.dump(lista_atual, f, indent=4, ensure_ascii=False)
                     st.balloons()
-                    st.success(f"Sucesso! Link automatizado gerado: {link_automatizado}")
+                    st.success("Produto adicionado com sucesso!")
                     st.rerun()
                 except Exception as e:
-                    st.error(f"Erro ao salvar: {e}")
+                    st.error(f"Erro ao salvar arquivo: {e}")
+
+        if "ultimo_anuncio" in st.session_state and os.path.exists(st.session_state["ultimo_anuncio"]):
+            st.subheader("📸 Seu Anúncio do Instagram está Pronto!")
+            st.image(st.session_state["ultimo_anuncio"], use_container_width=True)
+            
+            with open(st.session_state["ultimo_anuncio"], "rb") as file:
+                st.download_button(
+                    label="📥 Baixar Imagem para o Celular/PC",
+                    data=file,
+                    file_name=st.session_state["ultimo_anuncio"],
+                    mime="image/jpeg",
+                    use_container_width=True
+                )
