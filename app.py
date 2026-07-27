@@ -151,18 +151,21 @@ else:
             unsafe_allow_html=True,
         )
 
-        # Garante que o link vindo do JSON ou a reconstrução fiquem com a sintaxe correta
+        # 📸 EXIBE A FOTO DO PRODUTO
         nome_imagem = prod.get("imagem_instagram", "")
         if "anuncio_" in nome_imagem:
-            asin_limpo = (
+            asin = (
                 nome_imagem.replace("anuncio_", "")
                 .replace(".jpg", "")
                 .replace(".png", "")
             )
-            link_perfeito = f"https://www.amazon.com.br/dp/{asin_limpo}?tag=abielstore-20"
-        else:
-            link_perfeito = prod.get("link", "#")
+            url_imagem_amazon = f"https://images-na.ssl-images-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
+            st.image(url_imagem_amazon, use_container_width=True)
+        elif nome_imagem and os.path.exists(nome_imagem):
+            st.image(nome_imagem, use_container_width=True)
 
+        # 🔗 BOTÃO PARA COMPRA NA AMAZON
+        link_perfeito = prod.get("link", "#")
         st.link_button(
             label="👉 Ver na Amazon",
             url=link_perfeito,
