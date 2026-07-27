@@ -11,7 +11,10 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    /* Fundo da aplicação */
     .stApp { background-color: #d4aebe; }
+    
+    /* Textos principais */
     .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -19,10 +22,43 @@ st.markdown(
     }
     .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
     .block-container { max-width: 500px !important; padding-top: 2rem !important; }
+    
+    /* FIX: Estilo bonito para os Botões (link_button e button) */
+    .stButton > button, div[data-testid="stLinkButton"] > a {
+        background-color: #a8406b !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    /* FIX: Efeito ao passar o mouse em cima (Hover) */
+    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
+        background-color: #8c3256 !important;
+        color: #FFFFFF !important;
+        border-color: transparent !important;
+        transform: scale(1.02);
+    }
+
+    /* FIX: Estilo para os inputs de texto e senha */
+    .stTextInput input {
+        background-color: #FFFFFF !important;
+        color: #333333 !important;
+        border: 1px solid #a8406b !important;
+        border-radius: 6px !important;
+    }
+
+    /* FIX: Textos de Labels e Checkbox visíveis */
+    .stCheckbox label, .stTextInput label {
+        color: #4A4A4A !important;
+        font-weight: bold !important;
+    }
     </style>
 """,
     unsafe_allow_html=True,
 )
+ 
 
 try:
     from gerador import criar_imagem_produto
