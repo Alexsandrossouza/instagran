@@ -59,7 +59,7 @@ if not produtos:
     # Link real e completo da Amazon para o botão funcionar no teste
     st.link_button(
         label="👉 Ver Livro Perfeitamente Diferentes na Amazon", 
-        url="https://amazon.com.br", 
+        url="https://a.co/d/0cPSR7aq", 
         use_container_width=True
     )
 else:
