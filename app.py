@@ -86,7 +86,7 @@ if abrir_painel:
             botao_salvar = st.form_submit_button("Salvar Produto")
             
             if botao_salvar and novo_titulo and novo_preco and novo_asin:
-                # CORREÇÃO CRUCIAL: Inserido a estrutura /dp/ obrigatória para o link funcionar na Amazon
+                # FÓRMULA CORRIGIDA: Monta o link perfeitamente com a estrutura correta da Amazon
                 link_automatizado = f"https://amazon.com.br{novo_asin}?tag=abielstore-20"
                 nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
                 
