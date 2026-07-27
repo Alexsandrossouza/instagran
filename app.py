@@ -72,19 +72,17 @@ else:
         st.markdown(f"<h3 class='secao-texto'>📖 {prod['titulo']}</h3>", unsafe_allow_html=True)
         st.markdown(f"<p class='preco-texto'>Apenas: R$ {prod['preco']}</p>", unsafe_allow_html=True)
         
-        nome_imagem = prod.get("imagem_instagram", "")
-        if "anuncio_" in nome_imagem:
-            asin_limpo = nome_imagem.replace("anuncio_", "").replace(".jpg", "")
-            link_perfeito = f"https://amazon.com.br{asin_limpo}?tag=abielstore-20"
-        else:
-            link_perfeito = prod['link']
+        # CORREÇÃO DEFINITIVA NA EXIBIÇÃO: Extrai o código numérico de qualquer link antigo e monta com o /dp/ obrigatório
+        link_banco = prod['link']
+        codigo_limpo = link_banco.replace("https://amazon.com.br", "").replace("https://amazon.com.br", "").split("?")[0].replace("dp", "").replace("/", "")
+        link_corrigido_final = f"https://amazon.com.brdp/{codigo_limpo}?tag=abielstore-20"
 
-        st.link_button(label="👉 Ver na Amazon", url=link_perfeito, use_container_width=True)
+        st.link_button(label="👉 Ver na Amazon", url=link_corrigido_final, use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
 st.markdown("<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar através dos links acima, eu ganho uma pequena comissão da Amazon. 💕</p>", unsafe_allow_html=True)
 
-# Contato do WhatsApp com a BARRA FIXADA
+# Contato do WhatsApp
 st.markdown("<hr style='border: 0; height: 1px; background: #E0E0E0; margin: 20px 0;'>", unsafe_allow_html=True)
 st.markdown("<p class='subtitulo' style='font-size: 14px;'>Ficou com alguma dúvida ou quer bater um papo?</p>", unsafe_allow_html=True)
 
@@ -104,7 +102,6 @@ if abrir_painel:
         if produtos:
             st.subheader("🗑️ Gerenciar/Apagar Produtos")
             for i, prod in enumerate(produtos):
-                # CORREÇÃO: Adicionado o número 2 nas colunas para o Python não travar
                 col1, col2 = st.columns(2)
                 with col1:
                     st.write(f"**{prod['titulo']}** - R$ {prod['preco']}")
@@ -125,7 +122,8 @@ if abrir_painel:
             botao_salvar = st.form_submit_button("Salvar Produto")
             
             if botao_salvar and novo_titulo and novo_preco and novo_asin:
-                link_automatizado = f"https://amazon.com.br{novo_asin}?tag=abielstore-20"
+                # CORREÇÃO DEFINITIVA NO CADASTRO: Inserido o /dp/ fixo na montagem automatizada
+                link_automatizado = f"https://amazon.com.brdp/{novo_asin}?tag=abielstore-20"
                 nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
                 
                 if foto_upload and gerador_disponivel:
