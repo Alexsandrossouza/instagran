@@ -89,20 +89,20 @@ else:
         st.markdown(f"<h3 class='secao-texto'>📖 {prod['titulo']}</h3>", unsafe_allow_html=True)
         st.markdown(f"<p class='preco-texto'>Apenas: R$ {prod['preco']}</p>", unsafe_allow_html=True)
         
-        # Pega o link que está salvo no banco de dados
-        link_salvo = prod['link']
-        
-        # TRUQUE SEGURO: Se o link salvo estiver grudado e sem o /dp/, o Python reconstrói ele do zero
-        if "/dp/" not in link_salvo:
-            # Extrai apenas os números/letras do código isolando o que vem antes do '?'
-            asin_extraido = link_salvo.split("?")[0].split("/")[-1].replace("amazon.com.br", "")
-            link_final = f"https://amazon.com.br{asin_extraido}?tag=abielstore-20"
+        # SOLUÇÃO DE FORÇA BRUTA: Se o link salvo estiver errado, nós extraímos o código (ASIN/ISBN)
+        # que está no nome da imagem do anúncio (ex: anuncio_6553934800.jpg) para recriar o link com o /dp/ perfeito!
+        nome_imagem = prod.get("imagem_instagram", "")
+        if "anuncio_" in nome_imagem:
+            asin_limpo = nome_imagem.replace("anuncio_", "").replace(".jpg", "")
+            link_perfeito = f"https://www.amazon.com.br/dp/{asin_limpo}?tag=abielstore-20"
         else:
-            link_final = link_salvo
+            # Caso não encontre a imagem, usa o link salvo original
+            link_perfeito = prod['link']
 
-        # Cria o botão com a URL perfeitamente corrigida e testada
-        st.link_button(label="👉 Ver na Amazon", url=link_final, use_container_width=True)
+        # Cria o botão usando a URL montada manualmente com o /dp/ obrigatório
+        st.link_button(label="👉 Ver na Amazon", url=link_perfeito, use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 
