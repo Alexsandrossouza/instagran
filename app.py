@@ -16,8 +16,6 @@ st.markdown("""
     }
     .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
     .block-container { max-width: 500px !important; padding-top: 2rem !important; }
-    /* Esconde qualquer menu lateral que tenha sobrado */
-    [data-testid="stSidebar"] { display: none !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -31,7 +29,6 @@ GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", None)
 GITHUB_REPO = st.secrets.get("GITHUB_REPO", None)
 NOME_ARQUIVO = "produtos.json"
 
-# Limpa o cache para ler os produtos sempre atualizados do GitHub
 st.cache_data.clear()
 
 def carregar_produtos():
@@ -87,15 +84,15 @@ else:
 
 st.markdown("<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar através dos links acima, eu ganho uma pequena comissão da Amazon. 💕</p>", unsafe_allow_html=True)
 
-# Contato do WhatsApp
+# Contato do WhatsApp com a BARRA FIXADA
 st.markdown("<hr style='border: 0; height: 1px; background: #E0E0E0; margin: 20px 0;'>", unsafe_allow_html=True)
 st.markdown("<p class='subtitulo' style='font-size: 14px;'>Ficou com alguma dúvida ou quer bater um papo?</p>", unsafe_allow_html=True)
 
 NUMERO_WHATSAPP = "5548988480217" 
-url_whatsapp = f"https://wa.me/{NUMERO_WHATSAPP}?text=Olá,%20Cris!%20Vi%20um%20produto%20no%20seu%20site%20e%20gostaria%20de%20tirar%20uma%20dúvida."
+url_whatsapp = f"https://wa.me{NUMERO_WHATSAPP}?text=Olá,%20Cris!%20Vi%20um%20produto%20no%20seu%20site%20e%20gostaria%20de%20tirar%20uma%20dúvida."
 st.link_button(label="💬 Chamar a Cris no WhatsApp", url=url_whatsapp, use_container_width=True)
 
-# --- PAINEL DO ADMINISTRADOR (VOLTOU PARA O FINAL DA PÁGINA) ---
+# --- PAINEL DO ADMINISTRADOR ---
 st.markdown("<br><hr><br>", unsafe_allow_html=True)
 abrir_painel = st.checkbox("⚙️ Acessar Painel de Cadastro (Área da Cris)")
 
@@ -107,7 +104,8 @@ if abrir_painel:
         if produtos:
             st.subheader("🗑️ Gerenciar/Apagar Produtos")
             for i, prod in enumerate(produtos):
-                col1, col2 = st.columns()
+                # CORREÇÃO: Adicionado o número 2 nas colunas para o Python não travar
+                col1, col2 = st.columns(2)
                 with col1:
                     st.write(f"**{prod['titulo']}** - R$ {prod['preco']}")
                 with col2:
