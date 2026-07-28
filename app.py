@@ -105,7 +105,7 @@ def salvar_produtos_github(lista_produtos):
 # --- VISÃO DO VISITANTE ---
 st.markdown(
     (
-            "<h1 class='titulo-principal' style='color: #fcf803"
+            "<h1 class='titulo-principal' style='color: #fc0380"
             " !important;'>📚 Achadinhos da Cris </h1>"
         ),
     unsafe_allow_html=True,
@@ -138,12 +138,13 @@ if not produtos:
     )
 else:
     for prod in reversed(produtos):
-        # Layout Lado a Lado (Coluna da Imagem e Coluna de Dados)
-        col_img, col_info = st.columns([1, 2])
+        # 1. Cria colunas apenas para centralizar o bloco da imagem, deixando as laterais vazias
+        _, col_central, _ = st.columns([1, 12, 1])  # Aumenta a proporção da coluna central para aumentar a foto
 
         nome_img = prod.get("imagem_instagram", "")
         asin = prod.get("asin", "")
 
+        # Tenta extrair o ASIN do nome da imagem, se não estiver separado
         if not asin and "anuncio_" in nome_img:
             asin = (
                 nome_img.replace("anuncio_", "")
@@ -151,45 +152,43 @@ else:
                 .replace(".png", "")
             )
 
-        with col_img:
+        with col_central:
             imagem_exibida = False
 
-            # 1. Procura se a imagem existe na pasta local
-            if nome_img and os.path.exists(nome_img):
-                st.image(nome_img, use_container_width=True)
+            # --- EXIBIÇÃO DA FOTO (Aumentada e priorizando a do GitHub) ---
+            # Prioridade 1: Imagem enviada por upload e salva no GitHub via URL pública
+            if nome_img and GITHUB_REPO:
+                url_imagem_github = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{nome_img}"
+                # st.image agora usa o parâmetro use_container_width=True e a coluna maior para aumentar
+                st.image(url_imagem_github, use_container_width=True)
                 imagem_exibida = True
 
-            # 2. Procura qualquer arquivo na pasta que tenha o ASIN no nome
-            elif asin:
-                for arq in os.listdir("."):
-                    if asin in arq and arq.endswith(
-                        (".jpg", ".png", ".jpeg", ".webp")
-                    ):
-                        st.image(arq, use_container_width=True)
-                        imagem_exibida = True
-                        break
+            # Prioridade 2: Imagem oficial da Amazon pelo ASIN
+            elif asin and len(asin) >= 8:
+                url_capa_amazon = f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg"
+                st.image(url_capa_amazon, use_container_width=True)
+                imagem_exibida = True
 
-            # 3. Se não achou na pasta local, busca da Amazon
-            if not imagem_exibida and asin:
-                st.image(
-                    f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg",
+            # --- BOTÃO DE COMPRA (Logo abaixo da foto centralizada) ---
+            if imagem_exibida:
+                st.markdown("<br>", unsafe_allow_html=True) # Espaçamento suave
+                
+                link_perfeito = prod.get("link", "#")
+                st.link_button(
+                    label="👉 Ver na Amazon",
+                    url=link_perfeito,
                     use_container_width=True,
                 )
 
-        with col_info:
-            st.markdown(
-                f"<h4 style='text-align: left; color: #4A4A4A;"
-                f" margin-bottom: 5px;'>📖 {prod['titulo']}</h4>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                f"<p style='text-align: left; font-weight: bold; color:"
-                f" #2E7D32; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
-                unsafe_allow_html=True,
-            )
+        # Divisória suave entre cada produto
+        st.markdown(
+            "<hr style='border: 0; height: 1px; background: #c299ab; margin:"
+            " 20px 0;'>",
+            unsafe_allow_html=True,
+        )
 
-            link_perfeito = prod.get("link", "#")
-            st.link_button(
+        link_perfeito = prod.get("link", "#")
+        st.link_button(
                 label="👉 Ver na Amazon",
                 url=link_perfeito,
                 use_container_width=True,
