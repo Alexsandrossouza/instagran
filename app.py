@@ -6,15 +6,15 @@ from github import Github
 # ==========================================
 # 🎨 PALETA DE CORES
 # ==========================================
-COR_FUNDO_SITE = "#eb87ed"  # Lilás/Rosa do fundo
-COR_TITULO_PRINCIPAL = "#FFFFFF"  # Branco em destaque para o título
-COR_SUBTITULO = "#FFFFFF"  # Branco legível para as frases
+COR_FUNDO_SITE = "#e8b6e9"  # Lilás/Rosa do fundo
+COR_TITULO_PRINCIPAL = "#E7208D"  # Branco em destaque para o título
+COR_SUBTITULO = "#E7208D"  # Branco legível para as frases
 COR_TEXTO_PRODUTO = "#2C1B2E"  # Roxo escuro para o nome dos produtos
-COR_BOTOES = "#a8406b"  # Vinho/Rosa escuro dos botões e busca
-COR_BOTOES_HOVER = "#8c3256"  # Tom escuro do botão no hover
-COR_PRECO = "#00FF66"  # Verde limão chamativo
+COR_BOTOES = "#E7208D"  # Vinho/Rosa escuro dos botões e busca
+COR_BOTOES_HOVER = "#E7208D"  # Tom escuro do botão no hover
+COR_PRECO = "#FF0000"  # Verde limão chamativo
 COR_LINHA_DIVISORIA = "#6C8EBF"  # Azul das linhas
-COR_RODAPE = "#FFFFFF"  # Branco para o rodapé
+COR_RODAPE = "#E7208D"  # Branco para o rodapé
 
 # 1. Configuração da página
 st.set_page_config(
@@ -46,11 +46,11 @@ st.markdown(
     }}
 
     /* 2. TÍTULO PRINCIPAL */
-    .titulo-principal {{
+        .titulo-principal {{
         color: {COR_TITULO_PRINCIPAL} !important;
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
-        font-weight: 800;
+        font-weight: 900;
         font-size: 32px !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         margin-top: 5px;
@@ -58,7 +58,7 @@ st.markdown(
     }}
 
     /* 3. SUBTÍTULO E TEXTOS */
-    .subtitulo {{
+        .subtitulo {{
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
         color: {COR_SUBTITULO} !important;
@@ -211,7 +211,7 @@ with st.container():
     )
 
     # 🔘 2º: BOTÕES (ADMIN + WHATSAPP)
-    col_admin, col_whats = st.columns([1, 1])
+    col_admin, col_whats = st.columns([1, 2])
 
     with col_admin:
         if st.button("🔐 Admin", key="btn_admin_topo"):
