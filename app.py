@@ -215,43 +215,33 @@ if st.session_state.get("modo_admin", False):
 # 🔍 BARRA DE BUSCA E CONFIGURAÇÕES NO TOPO
 # ==========================================
 
-# Criamos uma caixa/container estilizada no topo
-with st.container():
-    # Divisória visual leve
-    st.markdown("---")
+# ==========================================
+# 🔍 BARRA DE BUSCA (ESTILO ADAPTADO)
+# ==========================================
+termo_busca = st.text_input(
+    label="Pesquise seu produto...",
+    placeholder="Pesquise seu produto...",
+    key="campoBusca",
+    label_visibility="collapsed",  # Esconde o rótulo padrão para ficar idêntico ao HTML
+)
 
-    # Criamos colunas para organizar a busca e as configurações lado a lado
-    col_busca, col_categoria, col_ordem = st.columns([2, 1, 1])
+# Filtra a lista de produtos de acordo com o texto digitado
+produtos_exibir = [
+    p
+    for p in produtos
+    if termo_busca.lower() in p.get("titulo", "").lower()
+]
 
-    with col_busca:
-        # Campo de busca principal
-        termo_busca = st.text_input(
-            "🔍 Buscar produto ou livro:",
-            placeholder="Digite o nome...",
-            key="busca_topo",
-        )
-
-    with col_categoria:
-        # Filtro de categoria (Configuração 1)
-        # Substitua a lista pelas suas categorias reais, se houver
-        categoria_selecionada = st.selectbox(
-            "📁 Categoria:",
-            ["Todas", "Livros", "Utilidades", "Acessórios"],
-            key="categoria_topo",
-        )
-
-    with col_ordem:
-        # Ordenação de preço/nome (Configuração 2)
-        ordem_selecionada = st.selectbox(
-            "⚙️ Ordenar por:",
-            [
-                "Mais recentes",
-                "Menor preço",
-                "Maior preço",
-                "A - Z",
-            ],
-            key="ordem_topo",
-        )
+# Mensagem quando nada for encontrado (adaptada com as cores do site)
+if termo_busca and not produtos_exibir:
+    st.markdown(
+        """
+        <div style="text-align: center; color: #a8406b; font-weight: bold; padding: 20px; background-color: #ffffff; border-radius: 8px; margin-top: 10px;">
+            Este produto não foi encontrado em nosso site. 😢
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     st.markdown("---")
 
@@ -330,6 +320,12 @@ div[data-baseweb="input"], div[data-baseweb="select"] {
             max-width: 600px !important;
             padding-top: 2rem !important;
         }
+        /* Customização do Campo de Busca */
+div[data-baseweb="input"] {
+    background-color: #FFFFFF !important;
+    border-radius: 25px !important; /* Deixa a barra de busca arredondada */
+    border: 2px solid #a8406b !important; /* Cor da borda combinando com o botão */
+}
     </style>
     """,
     unsafe_allow_html=True,
