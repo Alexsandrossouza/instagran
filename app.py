@@ -363,7 +363,7 @@ if st.session_state.get("modo_admin", False):
                     "titulo": novo_titulo,
                     "preco": novo_preco,
                     "link": link_automatizado,
-                    "imagem_instagram": nome_anuncio_final,
+                   "imagem_instagram": f"{novo_asin}.jpg",  # 👈 Agora vai salvar a foto limpa e bonita!
                     "asin": novo_asin,
                 }
                 lista_atual.append(novo_item)
