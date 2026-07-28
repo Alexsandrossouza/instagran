@@ -36,7 +36,7 @@ st.markdown(
     }
     
     .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
-        background-color: #8c3256 !important;
+        background-color: #d16f96 !important;
         color: #FFFFFF !important;
         border-color: transparent !important;
         transform: scale(1.02);
@@ -50,7 +50,7 @@ st.markdown(
     }
 
     .stCheckbox label, .stTextInput label {
-        color: #4A4A4A !important;
+        color: #121212 !important;
         font-weight: bold !important;
     }
 
@@ -399,10 +399,6 @@ def salvar_produtos_github(lista_produtos):
 # ==============================================================================
 
 # 📌 TÍTULO PRINCIPAL DO SITE
-st.markdown(
-    "<h1 class='titulo-principal'>📚 Achadinhos da Cris</h1>",
-    unsafe_allow_html=True,
-)
 
 st.markdown(
     "<p class='subtitulo' style='font-size: 16px; font-style: italic;'>Indicações"
