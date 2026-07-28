@@ -7,12 +7,12 @@ from github import Github
 # 🎨 PALETA DE CORES (Cores de alto contraste e legibilidade)
 # ==========================================
 COR_FUNDO_SITE = "#eb87ed"  # Lilás/Rosa do fundo
-COR_TITULO_PRINCIPAL = "#FFFFFF"  # Branco em destaque com sombra para o título
+COR_TITULO_PRINCIPAL = "#F009C9"  # Branco em destaque com sombra para o título
 COR_SUBTITULO = "#FFFFFF"  # Branco legível para as frases
-COR_TEXTO_PRODUTO = "#2C1B2E"  # Roxo escuro bem visível para o nome dos produtos
+COR_TEXTO_PRODUTO = "#121013"  # Roxo escuro bem visível para o nome dos produtos
 COR_BOTOES = "#a8406b"  # Vinho/Rosa escuro dos botões e busca
 COR_BOTOES_HOVER = "#8c3256"  # Tom escuro do botão no hover
-COR_PRECO = "#00FF66"  # Verde limão chamativo e de alta leitura
+COR_PRECO = "#FA0606"  # Verde limão chamativo e de alta leitura
 COR_LINHA_DIVISORIA = "#6C8EBF"  # Azul das linhas
 COR_RODAPE = "#FFFFFF"  # Branco para o rodapé
 
