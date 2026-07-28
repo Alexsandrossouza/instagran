@@ -104,7 +104,10 @@ def salvar_produtos_github(lista_produtos):
 
 # --- VISÃO DO VISITANTE ---
 st.markdown(
-    "<h1 class='titulo-principal'>📚 Achadinhos da Cris 📚</h1>",
+    (
+            "<h1 class='titulo-principal' style='color: #b8860b"
+            " !important;'>📚 Achadinhos da Cris 📚</h1>"
+        ),
     unsafe_allow_html=True,
 )
 st.markdown(
