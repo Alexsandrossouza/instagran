@@ -102,10 +102,10 @@ def salvar_produtos_github(lista_produtos):
     return False
 
 
-# --- VISÃO DO VISITANTE ---
+# --- VISÃO DO VISITANTE ---Titulo do site
 st.markdown(
     (
-            "<h1 class='titulo-principal' style='color: #fc0380"
+            "<h1 class='titulo-principal' style='color: #f7208f"
             " !important;'>📚 Achadinhos da Cris </h1>"
         ),
     unsafe_allow_html=True,
