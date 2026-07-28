@@ -3,18 +3,16 @@ import os
 import streamlit as st
 from github import Github
 
-# Configuração da página e design móvel
+# Configuração da página
 st.set_page_config(
     page_title="Achadinhos da Cris", page_icon="📚", layout="centered"
 )
 
+# Estilização do layout
 st.markdown(
     """
     <style>
-    /* Fundo da aplicação */
     .stApp { background-color: #d4aebe; }
-    
-    /* Textos principais */
     .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -23,7 +21,6 @@ st.markdown(
     .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
     .block-container { max-width: 500px !important; padding-top: 2rem !important; }
     
-    /* FIX: Estilo bonito para os Botões (link_button e button) */
     .stButton > button, div[data-testid="stLinkButton"] > a {
         background-color: #a8406b !important;
         color: #FFFFFF !important;
@@ -33,7 +30,6 @@ st.markdown(
         transition: all 0.3s ease !important;
     }
     
-    /* FIX: Efeito ao passar o mouse em cima (Hover) */
     .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
         background-color: #8c3256 !important;
         color: #FFFFFF !important;
@@ -41,7 +37,6 @@ st.markdown(
         transform: scale(1.02);
     }
 
-    /* FIX: Estilo para os inputs de texto e senha */
     .stTextInput input {
         background-color: #FFFFFF !important;
         color: #333333 !important;
@@ -49,7 +44,6 @@ st.markdown(
         border-radius: 6px !important;
     }
 
-    /* FIX: Textos de Labels e Checkbox visíveis */
     .stCheckbox label, .stTextInput label {
         color: #4A4A4A !important;
         font-weight: bold !important;
@@ -58,7 +52,6 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
- 
 
 try:
     from gerador import criar_imagem_produto
@@ -142,25 +135,44 @@ if not produtos:
     )
 else:
     for prod in reversed(produtos):
-        # 1. Cria 2 colunas lado a lado: 1 para a Imagem (esquerda) e 2 para os Textos/Botão (direita)
+        # Layout Lado a Lado (Coluna da Imagem e Coluna de Dados)
         col_img, col_info = st.columns([1, 2])
 
-        # --- COLUNA DA ESQUERDA: Apenas a Imagem ---
+        nome_img = prod.get("imagem_instagram", "")
+        asin = prod.get("asin", "")
+
+        if not asin and "anuncio_" in nome_img:
+            asin = (
+                nome_img.replace("anuncio_", "")
+                .replace(".jpg", "")
+                .replace(".png", "")
+            )
+
         with col_img:
-            nome_img = prod.get("imagem_instagram", "")
-            asin = prod.get("asin", "")
+            imagem_exibida = False
 
-            # Prioridade 1: Imagem salva no GitHub via Upload
-            if nome_img and GITHUB_REPO:
-                url_imagem_github = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{nome_img}"
-                st.image(url_imagem_github, use_container_width=True)
+            # 1. Procura se a imagem existe na pasta local
+            if nome_img and os.path.exists(nome_img):
+                st.image(nome_img, use_container_width=True)
+                imagem_exibida = True
 
-            # Prioridade 2: Imagem oficial da Amazon pelo ASIN
+            # 2. Procura qualquer arquivo na pasta que tenha o ASIN no nome
             elif asin:
-                url_capa_amazon = f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg"
-                st.image(url_capa_amazon, use_container_width=True)
+                for arq in os.listdir("."):
+                    if asin in arq and arq.endswith(
+                        (".jpg", ".png", ".jpeg", ".webp")
+                    ):
+                        st.image(arq, use_container_width=True)
+                        imagem_exibida = True
+                        break
 
-        # --- COLUNA DA DIREITA: Título, Preço e Botão ---
+            # 3. Se não achou na pasta local, busca da Amazon
+            if not imagem_exibida and asin:
+                st.image(
+                    f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg",
+                    use_container_width=True,
+                )
+
         with col_info:
             st.markdown(
                 f"<h4 style='text-align: left; color: #4A4A4A;"
@@ -180,13 +192,11 @@ else:
                 use_container_width=True,
             )
 
-        # Linha divisória suave entre cada produto
         st.markdown(
-            "<hr style='border: 0; height: 1px; background: #c299ab; margin:"
+            "<hr style='border: 0; height: 1px; background: #a8406b; margin:"
             " 15px 0;'>",
             unsafe_allow_html=True,
         )
-
 
 st.markdown(
     "<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar"
@@ -255,7 +265,6 @@ if abrir_painel:
             botao_salvar = st.form_submit_button("Salvar Produto")
 
             if botao_salvar and novo_titulo and novo_preco and novo_asin:
-                # CORREÇÃO DA URL: Adicionadas as barras / www. / e /dp/ corretamente
                 link_automatizado = f"https://www.amazon.com.br/dp/{novo_asin}?tag=abielstore-20"
                 nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
 
@@ -278,7 +287,7 @@ if abrir_painel:
                     "preco": novo_preco,
                     "link": link_automatizado,
                     "imagem_instagram": nome_anuncio_final,
-                    "asin": novo_asin,  # <--- Linha nova adicionada!
+                    "asin": novo_asin,
                 }
                 lista_atual.append(novo_item)
 
