@@ -307,8 +307,14 @@ if st.session_state.get("modo_admin", False):
                         edit_preco = st.text_input(
                             "Novo Preço:", value=prod.get("preco", "")
                         )
+                        #  Campo para o Link da Amazon
                         edit_asin = st.text_input(
-                            "Novo ASIN/ISBN:", value=prod.get("asin", "")
+                         "Novo ASIN/ISBN AMAZON:", value=prod.get("asin", "")
+                         )
+
+                         # 🟡 Campo para o Link do Mercado Livre
+                        edit_ml = st.text_input(
+                           "Link do Mercado Livre (Opcional):", value=prod.get("link_ml", "")
                         )
 
                         if st.form_submit_button("💾 Salvar Alterações"):
@@ -318,6 +324,7 @@ if st.session_state.get("modo_admin", False):
                             produtos[i][
                                 "link"
                             ] = f"https://www.amazon.com.br/dp/{edit_asin}?tag=abielstore-20"
+                            
 
                             if salvar_produtos_github(produtos):
                                 st.session_state[f"editando_{i}"] = False
