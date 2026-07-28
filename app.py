@@ -3,10 +3,214 @@ import os
 import streamlit as st
 from github import Github
 
-# Configuração da página
+# 1. Configuração da página
 st.set_page_config(
     page_title="Achadinhos da Cris", page_icon="📚", layout="centered"
 )
+
+# 2. Estilização CSS
+st.markdown(
+    """
+    <style>
+    /* Oculta barras padrão do Streamlit */
+    header {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+
+    .stApp { background-color: #d4aebe; }
+    .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
+        text-align: center;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: #f7cf02 !important;
+    }
+    .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
+    .block-container { max-width: 500px !important; padding-top: 1rem !important; }
+    
+    .stButton > button, div[data-testid="stLinkButton"] > a {
+        background-color: #a8406b !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
+        background-color: #8c3256 !important;
+        color: #FFFFFF !important;
+        border-color: transparent !important;
+        transform: scale(1.02);
+    }
+
+    .stTextInput input {
+        background-color: #FFFFFF !important;
+        color: #333333 !important;
+        border: 1px solid #a8406b !important;
+        border-radius: 6px !important;
+    }
+
+    .stCheckbox label, .stTextInput label {
+        color: #4A4A4A !important;
+        font-weight: bold !important;
+    }
+
+    /* Regra para travar todas as fotos com a mesma altura padrão */
+    div[data-testid="stImage"] img {
+        height: 320px !important;
+        object-fit: contain !important;
+        width: 100% !important;
+    }
+    </style>
+""",
+    unsafe_allow_html=True,
+)
+
+# 3. Importação do Gerador de Imagens (se existir)
+try:
+    from gerador import criar_imagem_produto
+
+    gerador_disponivel = True
+except Exception:
+    gerador_disponivel = False
+
+
+# 4. Funções para carregar e salvar produtos no GitHub
+def carregar_produtos():
+    if os.path.exists("produtos.json"):
+        with open("produtos.json", "r", encoding="utf-8") as f:
+            try:
+                return json.load(f)
+            except Exception:
+                return []
+    return []
+
+
+def salvar_produtos_github(produtos_lista):
+    try:
+        with open("produtos.json", "w", encoding="utf-8") as f:
+            json.dump(produtos_lista, f, ensure_ascii=False, indent=4)
+
+        token = st.secrets.get("GITHUB_TOKEN")
+        repo_name = st.secrets.get("GITHUB_REPO")
+
+        if token and repo_name:
+            g = Github(token)
+            repo = g.get_repo(repo_name)
+            contents = repo.get_contents("produtos.json")
+            json_str = json.dumps(produtos_lista, ensure_ascii=False, indent=4)
+            repo.update_file(
+                contents.path,
+                "Atualizando produtos.json",
+                json_str,
+                contents.sha,
+            )
+            return True
+        return True
+    except Exception as e:
+        st.error(f"Erro ao salvar: {e}")
+        return False
+
+
+# Carrega a lista inicial de produtos
+produtos = carregar_produtos()
+
+# ==========================================
+# 👑 CABEÇALHO COM BOTÃO DE ADMIN NO TOPO
+# ==========================================
+col_titulo, col_admin = st.columns([4, 1])
+
+with col_titulo:
+    st.markdown(
+        "<h1 class='titulo-principal'>Achadinhos da Cris</h1>",
+        unsafe_allow_html=True,
+    )
+
+with col_admin:
+    if st.button("🔐 Admin", key="btn_admin_topo"):
+        st.session_state["modo_admin"] = not st.session_state.get(
+            "modo_admin", False
+        )
+
+st.markdown(
+    "<p class='subtitulo'>Indicações de leituras edificantes e utilidades com muito carinho! ✨</p>",
+    unsafe_allow_html=True,
+)
+
+# ==========================================
+# 🔐 PAINEL DE ADMINISTRADOR (Aparece se clicar no botão)
+# ==========================================
+if st.session_state.get("modo_admin", False):
+    st.info("🔒 Área Restrita do Administrador")
+    senha = st.text_input(
+        "Digite sua senha de acesso:", type="password", key="senha_admin"
+    )
+
+    if senha == "cris123":
+        st.success("Acesso liberado!")
+
+        if produtos:
+            st.subheader("🗑️ Gerenciar/Apagar Produtos")
+            for i, prod in enumerate(produtos):
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.write(f"**{prod['titulo']}** - R$ {prod['preco']}")
+                with col2:
+                    if st.button("Apagar", key=f"del_{i}"):
+                        produtos.pop(i)
+                        salvar_produtos_github(produtos)
+                        st.toast("Item removido!")
+                        st.rerun()
+            st.markdown("<hr>", unsafe_allow_html=True)
+
+        st.subheader("➕ Adicionar Novo Achadinho")
+        with st.form("cadastro_produto", clear_on_submit=True):
+            novo_titulo = st.text_input("Título do Produto:")
+            novo_preco = st.text_input("Preço (Ex: 38,75):")
+            novo_asin = (
+                st.text_input("Código na Amazon (ASIN ou ISBN):")
+                .strip()
+                .replace(" ", "")
+            )
+            foto_upload = st.file_uploader(
+                "Escolha a foto:", type=["webp", "jpg", "jpeg", "png"]
+            )
+
+            botao_salvar = st.form_submit_button("Salvar Produto")
+
+            if botao_salvar and novo_titulo and novo_preco and novo_asin:
+                link_automatizado = f"https://www.amazon.com.br/dp/{novo_asin}?tag=abielstore-20"
+                nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
+
+                if foto_upload and gerador_disponivel:
+                    with open("temp_original.jpg", "wb") as f:
+                        f.write(foto_upload.getbuffer())
+                    try:
+                        criar_imagem_produto(
+                            caminho_produto="temp_original.jpg",
+                            titulo=novo_titulo,
+                            preco=f"R$ {novo_preco}",
+                            caminho_salvamento=nome_anuncio_final,
+                        )
+                    except Exception:
+                        pass
+
+                lista_atual = carregar_produtos()
+                novo_item = {
+                    "titulo": novo_titulo,
+                    "preco": novo_preco,
+                    "link": link_automatizado,
+                    "imagem_instagram": nome_anuncio_final,
+                    "asin": novo_asin,
+                }
+                lista_atual.append(novo_item)
+
+                if salvar_produtos_github(lista_atual):
+                    st.balloons()
+                    st.success("Produto cadastrado com sucesso!")
+                    st.rerun()
+    elif senha != "":
+        st.error("Senha incorreta!")
+
 # ==========================================
 # 🔍 BARRA DE BUSCA E CONFIGURAÇÕES NO TOPO
 # ==========================================
@@ -67,6 +271,12 @@ st.markdown(
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-weight: bold;
         }
+
+        /* Deixa os campos de busca e seleção com fundo branco e cantos arredondados no topo */
+div[data-baseweb="input"], div[data-baseweb="select"] {
+    background-color: #FFFFFF !important;
+    border-radius: 8px !important;
+}
 
         /* 3. TEXTOS GERAIS */
         .subtitulo, .secao-texto, .rodape-texto {
@@ -328,79 +538,3 @@ st.link_button(
     url=url_whatsapp,
     use_container_width=True,
 )
-
-# ==============================================================================
-# ⚙️ PAINEL DO ADMINISTRADOR (ÁREA PRIVADA DA CRIS)
-# ==============================================================================
-st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-# 🔘 BOTÃO/CHECKBOX 4: Caixa para abrir o painel do administrador
-abrir_painel = st.checkbox("⚙️ Acessar Painel de Cadastro (Área da Cris)")
-
-if abrir_painel:
-    senha = st.text_input("Digite sua senha de acesso:", type="password")
-    if senha == "cris123":
-        st.success("Acesso liberado!")
-
-        if produtos:
-            st.subheader("🗑️ Gerenciar/Apagar Produtos")
-            for i, prod in enumerate(produtos):
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write(f"**{prod['titulo']}** - R$ {prod['preco']}")
-                with col2:
-                    # 🔘 BOTÃO 5: Botão "Apagar" dentro do painel
-                    if st.button("Apagar", key=f"del_{i}"):
-                        produtos.pop(i)
-                        if salvar_produtos_github(produtos):
-                            st.toast("Item removido!")
-                            st.rerun()
-            st.markdown("<hr>", unsafe_allow_html=True)
-
-        st.subheader("➕ Adicionar Novo Achadinho")
-        with st.form("cadastro_produto", clear_on_submit=True):
-            novo_titulo = st.text_input("Título do Produto:")
-            novo_preco = st.text_input("Preço (Ex: 38,75):")
-            novo_asin = (
-                st.text_input("Código na Amazon (ASIN ou ISBN):")
-                .strip()
-                .replace(" ", "")
-            )
-            foto_upload = st.file_uploader(
-                "Escolha a foto:", type=["webp", "jpg", "jpeg", "png"]
-            )
-
-            # 🔘 BOTÃO 6: Botão para enviar e salvar o novo produto
-            botao_salvar = st.form_submit_button("Salvar Produto")
-
-            if botao_salvar and novo_titulo and novo_preco and novo_asin:
-                link_automatizado = f"https://www.amazon.com.br/dp/{novo_asin}?tag=abielstore-20"
-                nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
-
-                if foto_upload and gerador_disponivel:
-                    with open("temp_original.jpg", "wb") as f:
-                        f.write(foto_upload.getbuffer())
-                    try:
-                        criar_imagem_produto(
-                            caminho_produto="temp_original.jpg",
-                            titulo=novo_titulo,
-                            preco=f"R$ {novo_preco}",
-                            caminho_salvamento=nome_anuncio_final,
-                        )
-                    except Exception:
-                        pass
-
-                lista_atual = carregar_produtos()
-                novo_item = {
-                    "titulo": novo_titulo,
-                    "preco": novo_preco,
-                    "link": link_automatizado,
-                    "imagem_instagram": nome_anuncio_final,
-                    "asin": novo_asin,
-                }
-                lista_atual.append(novo_item)
-
-                if salvar_produtos_github(lista_atual):
-                    st.balloons()
-                    st.success("Produto cadastrado com sucesso!")
-                    st.rerun()
