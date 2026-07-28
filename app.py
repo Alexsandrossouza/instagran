@@ -140,7 +140,7 @@ st.markdown(
 # 🔐 PAINEL DE ADMINISTRADOR (Aparece se clicar no botão)
 # ==========================================
 if st.session_state.get("modo_admin", False):
-    st.info("🔒 Área Restrita do Administrador")
+    st.info(" Área Restrita do Administrador")
     senha = st.text_input(
         "Digite sua senha de acesso:", type="password", key="senha_admin"
     )
