@@ -242,7 +242,7 @@ with st.container():
     )
 
 # ==========================================
-# 🔐 PAINEL DE ADMINISTRADOR (Aparece se clicar em Admin)
+# 🔐 PAINEL DE ADMINISTRADOR (COM EDITAR E APAGAR)
 # ==========================================
 if st.session_state.get("modo_admin", False):
     st.info(" Área Restrita do Administrador")
@@ -254,17 +254,55 @@ if st.session_state.get("modo_admin", False):
         st.success("Acesso liberado!")
 
         if produtos:
-            st.subheader("🗑️ Gerenciar/Apagar Produtos")
+            st.subheader("✏️ Gerenciar/Editar/Apagar Produtos")
             for i, prod in enumerate(produtos):
-                col1, col2 = st.columns([3, 1])
-                with col1:
+                col_info, col_edit, col_del = st.columns([3, 1, 1])
+
+                with col_info:
                     st.write(f"**{prod['titulo']}** - R$ {prod['preco']}")
-                with col2:
+
+                with col_edit:
+                    if st.button("Editar", key=f"edit_btn_{i}"):
+                        # Alterna a exibição do formulário de edição do item
+                        chave_edit = f"editando_{i}"
+                        st.session_state[chave_edit] = not st.session_state.get(
+                            chave_edit, False
+                        )
+
+                with col_del:
                     if st.button("Apagar", key=f"del_{i}"):
                         produtos.pop(i)
                         salvar_produtos_github(produtos)
                         st.toast("Item removido!")
                         st.rerun()
+
+                # 📝 FORMULÁRIO DE EDIÇÃO (Aparece ao clicar em Editar)
+                if st.session_state.get(f"editando_{i}", False):
+                    with st.form(f"form_editar_{i}"):
+                        st.write(f"**Editando:** {prod['titulo']}")
+                        edit_titulo = st.text_input(
+                            "Novo Título:", value=prod.get("titulo", "")
+                        )
+                        edit_preco = st.text_input(
+                            "Novo Preço:", value=prod.get("preco", "")
+                        )
+                        edit_asin = st.text_input(
+                            "Novo ASIN/ISBN:", value=prod.get("asin", "")
+                        )
+
+                        if st.form_submit_button("💾 Salvar Alterações"):
+                            produtos[i]["titulo"] = edit_titulo
+                            produtos[i]["preco"] = edit_preco
+                            produtos[i]["asin"] = edit_asin
+                            produtos[i][
+                                "link"
+                            ] = f"https://www.amazon.com.br/dp/{edit_asin}?tag=abielstore-20"
+
+                            if salvar_produtos_github(produtos):
+                                st.session_state[f"editando_{i}"] = False
+                                st.success("Produto atualizado com sucesso!")
+                                st.rerun()
+
             st.markdown("<hr>", unsafe_allow_html=True)
 
         st.subheader("➕ Adicionar Novo Achadinho")
