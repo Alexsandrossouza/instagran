@@ -128,9 +128,12 @@ st.markdown(
         display: block !important;
     }}
     
+    /* Ajusta a largura no PC mantendo perfeito no celular */
     .block-container {{
-        max-width: 600px !important;
+        max-width: 1000px !important; /* Aumentado para expandir no computador */
         padding-top: 0.5rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }}
     </style>
 """,
