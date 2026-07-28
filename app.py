@@ -19,9 +19,19 @@ st.markdown(
 
 
 
-    .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
-        text-align: center;
-        font-family: 'Helvetica Neue', Arial, sans-serif;
+   /* Importa a fonte do Google no topo */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+    .titulo-principal {
+        text-align: center !important;
+        font-family: 'Playfair Display', Georgia, serif !important; /* 👈 FONTE ELEGANTE */
+        color: #f7208f !important;                                 /* 👈 COR ROSA */
+    }
+
+    .subtitulo, .secao-texto, .rodape-texto {
+        text-align: center !important;
+        font-family: 'Helvetica Neue', Arial, sans-serif !important;
+        color: #4A4A4A !important;
     }
     
     /* 2. COR DO PREÇO DO PRODUTO (Verde) */
@@ -122,11 +132,7 @@ def salvar_produtos_github(lista_produtos):
 
 # 📌 TÍTULO PRINCIPAL DO SITE
 st.markdown(
-    (
-        "<h1 class='titulo-principal' style='color: #f7208f;"
-        " font-family: \"Trebuchet MS\", sans-serif !important;'>📚 Achadinhos da"
-        " Cris</h1>"
-    ),
+    "<h1 class='titulo-principal'>📚 Achadinhos da Cris</h1>",
     unsafe_allow_html=True,
 )
 
