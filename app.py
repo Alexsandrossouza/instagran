@@ -14,7 +14,7 @@ st.markdown(
     <style>
         /* 1. RESTAURAR COR DE FUNDO (Lilás) */
         .stApp {
-            background-color: #E6E6FA !important; /* Cor Lilás de fundo */
+            background-color: #eb87ed !important; /* Cor Lilás de fundo */
         }
 
         /* 2. RESTAURAR ESTILO DO TÍTULO (Rosa Choque) */
@@ -40,7 +40,7 @@ st.markdown(
 
         /* 4. RESTAURAR ESTILO DOS BOTÕES (Borda e Fundo Claro) */
         div[data-testid="stLinkButton"] > a {
-            background-color: #FFFFFF !important; /* Fundo branco/claro */
+            background-color: ##a040c9 !important; /* Fundo branco/claro */
             color: #4A4A4A !important;           /* Texto escuro */
             border: 2px solid #D3D3D3 !important; /* Borda cinza clara */
             border-radius: 10px !important;       /* Bordas arredondadas */
