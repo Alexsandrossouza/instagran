@@ -123,9 +123,10 @@ def salvar_produtos_github(lista_produtos):
 # 📌 TÍTULO PRINCIPAL DO SITE
 st.markdown(
     (
-        "<h1 class='titulo-principal' style='color: #f7208f"
-        " !important;'>📚 Achadinhos da Cris </h1>"
-    ),  # 👈 style='color: #f7208f' define a cor do Título (Rosa Choque)
+        "<h1 class='titulo-principal' style='color: #f7208f;"
+        " font-family: \"Trebuchet MS\", sans-serif !important;'>📚 Achadinhos da"
+        " Cris</h1>"
+    ),
     unsafe_allow_html=True,
 )
 
