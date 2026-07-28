@@ -3,60 +3,45 @@ import os
 import streamlit as st
 from github import Github
 
-# Configuração da página (Aba do navegador)
+# Configuração da página
 st.set_page_config(
     page_title="Achadinhos da Cris", page_icon="📚", layout="centered"
 )
 
-# ==============================================================================
-# 🎨 BLOCO DE ESTILOS CSS (AQUI FICA A COR DE TODOS OS BOTÕES E FUNDOS)
-# ==============================================================================
+# Estilização do layout
 st.markdown(
     """
     <style>
-    /* 1. COR DE FUNDO DO SITE (Rosa Claro) */
+    /* Oculta as barras nativas do Streamlit */
+    header {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+
     .stApp { background-color: #d4aebe; }
-
-
-
-   /* Importa a fonte do Google no topo */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-
-    .titulo-principal {
-        text-align: center !important;
-        font-family: 'Playfair Display', Georgia, serif !important; /* 👈 FONTE ELEGANTE */
-        color: #f7208f !important;                                 /* 👈 COR ROSA */
+    .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
+        text-align: center;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: #f7cf02 !important;
     }
-
-    .subtitulo, .secao-texto, .rodape-texto {
-        text-align: center !important;
-        font-family: 'Helvetica Neue', Arial, sans-serif !important;
-        color: #4A4A4A !important;
-    }
-    
-    /* 2. COR DO PREÇO DO PRODUTO (Verde) */
     .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
     .block-container { max-width: 500px !important; padding-top: 2rem !important; }
     
-    /* 3. ESTILO DOS BOTÕES (Afeta TODOS os botões e links do site) */
     .stButton > button, div[data-testid="stLinkButton"] > a {
-        background-color: #a8406b !important; /* 👈 COR DE FUNDO DO BOTÃO (Rosa) */
-        color: #FFFFFF !important;            /* 👈 COR DO TEXTO DO BOTÃO (Branco) */
+        background-color: #a8406b !important;
+        color: #FFFFFF !important;
         border: none !important;
         border-radius: 8px !important;
         font-weight: bold !important;
         transition: all 0.3s ease !important;
     }
     
-    /* 4. COR DO BOTÃO AO PASSAR O MOUSE POR CIMA */
     .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
-        background-color: #8c3256 !important; /* 👈 COR AO PASSAR O MOUSE (Rosa Escuro) */
-        color: #FFFFFF !important;            /* 👈 COR DO TEXTO AO PASSAR O MOUSE */
+        background-color: #8c3256 !important;
+        color: #FFFFFF !important;
         border-color: transparent !important;
         transform: scale(1.02);
     }
 
-    /* 5. CAMPOS DE TEXTO (Onde você digita) */
     .stTextInput input {
         background-color: #FFFFFF !important;
         color: #333333 !important;
@@ -68,11 +53,24 @@ st.markdown(
         color: #4A4A4A !important;
         font-weight: bold !important;
     }
+
+    /* Regra para travar todas as fotos com a mesma altura padrão */
+    div[data-testid="stImage"] img {
+        height: 320px !important;
+        object-fit: contain !important;
+        width: 100% !important;
+    }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
+try:
+    from gerador import criar_imagem_produto
+
+    gerador_disponivel = True
+except Exception:
+    gerador_disponivel = False
 # Tenta carregar o gerador de imagens
 try:
     from gerador import criar_imagem_produto
