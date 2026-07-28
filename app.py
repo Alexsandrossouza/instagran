@@ -16,8 +16,9 @@ st.markdown(
     <style>
     /* 1. COR DE FUNDO DO SITE (Rosa Claro) */
     .stApp { background-color: #d4aebe; }
-    
-    /* Deixe sem a linha do color: #f7cf02 !important; */
+
+
+
     .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
