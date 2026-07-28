@@ -409,16 +409,25 @@ else:
             )
 
         with col_img:
-            asin = prod.get("asin")
-            foto_insta = prod.get("imagem_instagram")
+            imagem_carregada = False
 
-            # 1. Se tiver ASIN, puxa a foto limpa da Amazon
+            # 1. Tenta exibir a imagem oficial da Amazon pelo ASIN
             if asin:
-                st.image(f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg", use_container_width=True)
-            
-            # 2. Se não tiver ASIN, puxa a imagem do Instagram salva
-            elif foto_insta and os.path.exists(foto_insta):
-                st.image(foto_insta, use_container_width=True)
+                url_amazon = f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg"
+                st.image(url_amazon, use_container_width=True)
+                imagem_carregada = True
+
+            # 2. Se não tiver ASIN ou falhar, tenta usar a imagem local salva do Instagram
+            elif nome_img and os.path.exists(nome_img):
+                st.image(nome_img, use_container_width=True)
+                imagem_carregada = True
+
+            # 3. Se não achar nenhuma das duas, coloca uma imagem padrão (fallback)
+            if not imagem_carregada:
+                st.image(
+                    "https://placehold.co/400x400/png?text=Sem+Imagem",
+                    use_container_width=True,
+                )
 
         with col_info:
             st.markdown(
