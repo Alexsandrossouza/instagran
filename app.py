@@ -406,26 +406,15 @@ if not produtos:
     )
 
 else:
-    
     for prod in reversed(produtos_exibir):
         col_img, col_info = st.columns([1, 2])
 
         nome_img = prod.get("imagem_instagram", "")
-        asin = prod.get("asin", "")
 
         with col_img:
-            # 1ª Tentativa: Imagem salva na pasta (anuncio_ASIN.jpg ou foto customizada)
+            # Puxa a imagem da pasta local do seu projeto
             if nome_img and os.path.exists(nome_img):
                 st.image(nome_img, use_container_width=True)
-
-            # 2ª Tentativa: Se tiver ASIN, puxa a imagem da Amazon via CDN pública
-            elif asin:
-                st.image(
-                    f"https://images-na.ssl-images-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg",
-                    use_container_width=True,
-                )
-
-            # 3ª Tentativa: Imagem de aviso para não ficar em branco
             else:
                 st.image(
                     "https://via.placeholder.com/400x400.png?text=Sem+Foto",
@@ -439,7 +428,7 @@ else:
                 unsafe_allow_html=True,
             )
             st.markdown(
-                f"<p class='preco-texto' style='text-align: left; margin-bottom: 14px;'>Apenas: R$ {prod['preco']}</p>",
+                f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
                 unsafe_allow_html=True,
             )
 
@@ -449,11 +438,6 @@ else:
                 url=link_perfeito,
                 use_container_width=True,
             )
-
-        st.markdown(
-            f"<hr style='border: 0; height: 1px; background: {COR_LINHA_DIVISORIA}; margin: 15px 0;'>",
-            unsafe_allow_html=True,
-        )
 
 # RODAPÉ
 st.markdown(
