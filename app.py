@@ -7,6 +7,49 @@ from github import Github
 st.set_page_config(
     page_title="Achadinhos da Cris", page_icon="📚", layout="centered"
 )
+# ==========================================
+# 🔍 BARRA DE BUSCA E CONFIGURAÇÕES NO TOPO
+# ==========================================
+
+# Criamos uma caixa/container estilizada no topo
+with st.container():
+    # Divisória visual leve
+    st.markdown("---")
+
+    # Criamos colunas para organizar a busca e as configurações lado a lado
+    col_busca, col_categoria, col_ordem = st.columns([2, 1, 1])
+
+    with col_busca:
+        # Campo de busca principal
+        termo_busca = st.text_input(
+            "🔍 Buscar produto ou livro:",
+            placeholder="Digite o nome...",
+            key="busca_topo",
+        )
+
+    with col_categoria:
+        # Filtro de categoria (Configuração 1)
+        # Substitua a lista pelas suas categorias reais, se houver
+        categoria_selecionada = st.selectbox(
+            "📁 Categoria:",
+            ["Todas", "Livros", "Utilidades", "Acessórios"],
+            key="categoria_topo",
+        )
+
+    with col_ordem:
+        # Ordenação de preço/nome (Configuração 2)
+        ordem_selecionada = st.selectbox(
+            "⚙️ Ordenar por:",
+            [
+                "Mais recentes",
+                "Menor preço",
+                "Maior preço",
+                "A - Z",
+            ],
+            key="ordem_topo",
+        )
+
+    st.markdown("---")
 
 # Estilização do layout
 st.markdown(
