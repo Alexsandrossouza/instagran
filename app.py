@@ -3,69 +3,131 @@ import os
 import streamlit as st
 from github import Github
 
+# ==========================================
+# 🎨 PALETA DE CORES (Cores de alto contraste e legibilidade)
+# ==========================================
+COR_FUNDO_SITE = "#eb87ed"  # Lilás/Rosa do fundo
+COR_TITULO_PRINCIPAL = "#FFFFFF"  # Branco em destaque com sombra para o título
+COR_SUBTITULO = "#FFFFFF"  # Branco legível para as frases
+COR_TEXTO_PRODUTO = "#2C1B2E"  # Roxo escuro bem visível para o nome dos produtos
+COR_BOTOES = "#a8406b"  # Vinho/Rosa escuro dos botões e busca
+COR_BOTOES_HOVER = "#8c3256"  # Tom escuro do botão no hover
+COR_PRECO = "#00FF66"  # Verde limão chamativo e de alta leitura
+COR_LINHA_DIVISORIA = "#6C8EBF"  # Azul das linhas
+COR_RODAPE = "#FFFFFF"  # Branco para o rodapé
+
 # 1. Configuração da página
 st.set_page_config(
     page_title="Achadinhos da Cris", page_icon="📚", layout="centered"
 )
 
-# 2. Estilização CSS
+# 2. Estilização CSS utilizando as referências de cores
 st.markdown(
-    """
+    f"""
     <style>
     /* Oculta barras padrão do Streamlit */
-    header {visibility: hidden;}
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    header {{visibility: hidden;}}
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
 
-    .stApp { background-color: #d4aebe; }
-    .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
+    /* 1. COR DE FUNDO */
+    .stApp {{
+        background-color: {COR_FUNDO_SITE} !important;
+    }}
+
+    /* 2. TÍTULO PRINCIPAL (Restaurado e com Destaque) */
+    .titulo-principal {{
+        color: {COR_TITULO_PRINCIPAL} !important;
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
-        color: #f7cf02 !important;
-    }
-    .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
-    .block-container { max-width: 500px !important; padding-top: 1rem !important; }
+        font-weight: 800;
+        font-size: 32px !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }}
+
+    /* 3. SUBTÍTULO E TEXTOS */
+    .subtitulo {{
+        text-align: center;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: {COR_SUBTITULO} !important;
+        font-size: 16px !important;
+        font-style: italic;
+        font-weight: 600;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        margin-bottom: 15px;
+    }}
+
+    .secao-texto {{
+        text-align: center;
+        color: {COR_TEXTO_PRODUTO} !important;
+        font-weight: bold;
+    }}
     
-    .stButton > button, div[data-testid="stLinkButton"] > a {
-        background-color: #a8406b !important;
+    .preco-texto {{
+        color: {COR_PRECO} !important;
+        font-weight: 800 !important;
+        font-size: 18px !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    }}
+
+    .rodape-texto {{
+        text-align: center;
+        color: {COR_RODAPE} !important;
+        font-weight: 500;
+    }}
+
+    /* 4. BOTÕES */
+    .stButton > button, div[data-testid="stLinkButton"] > a {{
+        background-color: {COR_BOTOES} !important;
         color: #FFFFFF !important;
         border: none !important;
         border-radius: 8px !important;
         font-weight: bold !important;
         transition: all 0.3s ease !important;
-    }
+    }}
     
-    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
-        background-color: #d16f96 !important;
+    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {{
+        background-color: {COR_BOTOES_HOVER} !important;
         color: #FFFFFF !important;
         border-color: transparent !important;
         transform: scale(1.02);
-    }
+    }}
 
-    .stTextInput input {
+    /* CAMPO DE BUSCA */
+    div[data-baseweb="input"] {{
+        background-color: #FFFFFF !important;
+        border-radius: 25px !important;
+        border: 2px solid {COR_BOTOES} !important;
+    }}
+
+    .stTextInput input {{
         background-color: #FFFFFF !important;
         color: #333333 !important;
-        border: 1px solid #a8406b !important;
         border-radius: 6px !important;
-    }
+    }}
 
-    .stCheckbox label, .stTextInput label {
-        color: #121212 !important;
-        font-weight: bold !important;
-    }
-
-    /* Regra para travar todas as fotos com a mesma altura padrão */
-    div[data-testid="stImage"] img {
-        height: 320px !important;
+    /* IMAGENS */
+    div[data-testid="stColumn"] img, img {{
+        max-height: 230px !important;
+        height: 230px !important;
         object-fit: contain !important;
         width: 100% !important;
-    }
+        margin: 0 auto !important;
+        display: block !important;
+    }}
+    
+    .block-container {{
+        max-width: 600px !important;
+        padding-top: 1rem !important;
+    }}
     </style>
 """,
     unsafe_allow_html=True,
 )
 
-# 3. Importação do Gerador de Imagens (se existir)
+# 3. Importação do Gerador de Imagens
 try:
     from gerador import criar_imagem_produto
 
@@ -73,45 +135,52 @@ try:
 except Exception:
     gerador_disponivel = False
 
+# Credenciais do GitHub
+GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", None)
+GITHUB_REPO = st.secrets.get("GITHUB_REPO", None)
+NOME_ARQUIVO = "produtos.json"
 
-# 4. Funções para carregar e salvar produtos no GitHub
+st.cache_data.clear()
+
+
+# Função para carregar produtos
 def carregar_produtos():
-    if os.path.exists("produtos.json"):
-        with open("produtos.json", "r", encoding="utf-8") as f:
-            try:
-                return json.load(f)
-            except Exception:
-                return []
+    if GITHUB_TOKEN and GITHUB_REPO:
+        try:
+            g = Github(GITHUB_TOKEN)
+            repo = g.get_repo(GITHUB_REPO)
+            conteudo = repo.get_contents(NOME_ARQUIVO, ref="main")
+            return json.loads(conteudo.decoded_content.decode("utf-8"))
+        except Exception:
+            return []
     return []
 
 
-def salvar_produtos_github(produtos_lista):
-    try:
-        with open("produtos.json", "w", encoding="utf-8") as f:
-            json.dump(produtos_lista, f, ensure_ascii=False, indent=4)
-
-        token = st.secrets.get("GITHUB_TOKEN")
-        repo_name = st.secrets.get("GITHUB_REPO")
-
-        if token and repo_name:
-            g = Github(token)
-            repo = g.get_repo(repo_name)
-            contents = repo.get_contents("produtos.json")
-            json_str = json.dumps(produtos_lista, ensure_ascii=False, indent=4)
-            repo.update_file(
-                contents.path,
-                "Atualizando produtos.json",
-                json_str,
-                contents.sha,
+# Função para salvar produtos
+def salvar_produtos_github(lista_produtos):
+    if GITHUB_TOKEN and GITHUB_REPO:
+        try:
+            g = Github(GITHUB_TOKEN)
+            repo = g.get_repo(GITHUB_REPO)
+            novo_conteudo = json.dumps(
+                lista_produtos, indent=4, ensure_ascii=False
             )
+            conteudo = repo.get_contents(NOME_ARQUIVO, ref="main")
+            repo.update_file(
+                conteudo.path,
+                "Atualiza lista de achadinhos",
+                novo_conteudo,
+                conteudo.sha,
+                branch="main",
+            )
+            st.cache_data.clear()
             return True
-        return True
-    except Exception as e:
-        st.error(f"Erro ao salvar: {e}")
-        return False
+        except Exception:
+            return False
+    return False
 
 
-# Carrega a lista inicial de produtos
+# Carrega a lista de produtos
 produtos = carregar_produtos()
 
 # ==========================================
@@ -126,7 +195,6 @@ with col_admin:
         )
 
 with col_whats:
-    # ⚠️ Troque pelo número real da Cris (Com DDD e 55 na frente)
     numero_whatsapp = "5548988480217"
     mensagem = "Olá Cris! Vim pelo site e gostaria de tirar uma dúvida."
 
@@ -134,8 +202,9 @@ with col_whats:
         f"https://wa.me/{numero_whatsapp}?text={mensagem.replace(' ', '%20')}"
     )
     st.link_button("💬 Falar no WhatsApp", link_wa, use_container_width=True)
+
 # ==========================================
-# 🔐 PAINEL DE ADMINISTRADOR (Aparece se clicar no botão)
+# 🔐 PAINEL DE ADMINISTRADOR
 # ==========================================
 if st.session_state.get("modo_admin", False):
     st.info(" Área Restrita do Administrador")
@@ -210,207 +279,57 @@ if st.session_state.get("modo_admin", False):
         st.error("Senha incorreta!")
 
 # ==========================================
-# 🔍 BARRA DE BUSCA E CONFIGURAÇÕES NO TOPO
-# ==========================================
-
-# ==========================================
-# 🔍 BARRA DE BUSCA (ESTILO ADAPTADO)
+# 🔍 BARRA DE BUSCA
 # ==========================================
 termo_busca = st.text_input(
     label="Pesquise seu produto...",
     placeholder="Pesquise seu produto...",
     key="campoBusca",
-    label_visibility="collapsed",  # Esconde o rótulo padrão para ficar idêntico ao HTML
+    label_visibility="collapsed",
 )
 
-# Filtra a lista de produtos de acordo com o texto digitado
+# Filtra produtos
 produtos_exibir = [
     p
     for p in produtos
     if termo_busca.lower() in p.get("titulo", "").lower()
 ]
 
-# Mensagem quando nada for encontrado (adaptada com as cores do site)
+# Mensagem de item não encontrado
 if termo_busca and not produtos_exibir:
     st.markdown(
-        """
-        <div style="text-align: center; color: #a8406b; font-weight: bold; padding: 20px; background-color: #ffffff; border-radius: 8px; margin-top: 10px;">
+        f"""
+        <div style="text-align: center; color: {COR_BOTOES}; font-weight: bold; padding: 20px; background-color: #ffffff; border-radius: 8px; margin-top: 10px;">
             Este produto não foi encontrado em nosso site. 😢
         </div>
         """,
         unsafe_allow_html=True,
     )
-
     st.markdown("---")
 
-# Estilização do layout
-st.markdown(
-    """
-    <style>
-        /* 1. RESTAURAR COR DE FUNDO (Lilás) */
-        .stApp {
-            background-color: #eb87ed !important; /* Cor Lilás de fundo */
-        }
-
-        /* 2. RESTAURAR ESTILO DO TÍTULO (Rosa Choque) */
-        .titulo-principal {
-            color: #f7208f !important;
-            text-align: center;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            font-weight: bold;
-        }
-
-        /* Deixa os campos de busca e seleção com fundo branco e cantos arredondados no topo */
-div[data-baseweb="input"], div[data-baseweb="select"] {
-    background-color: #FFFFFF !important;
-    border-radius: 8px !important;
-}
-
-        /* 3. TEXTOS GERAIS */
-        .subtitulo, .secao-texto, .rodape-texto {
-            text-align: center;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            color: #4A4A4A;
-        }
-        
-        .preco-texto {
-            color: #2E7D32 !important; /* Verde do preço */
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* FIX: Estilo bonito para os Botões (link_button e button) */
-    .stButton > button, div[data-testid="stLinkButton"] > a {
-        background-color: #a8406b !important;
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 8px !important;
-        font-weight: bold !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    /* FIX: Efeito ao passar o mouse em cima (Hover) */
-    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
-        background-color: #8c3256 !important;
-        color: #FFFFFF !important;
-        border-color: transparent !important;
-        transform: scale(1.02);
-    }
-
-        div[data-testid="stLinkButton"] > a:hover {
-            background-color: #F0F0F0 !important; /* Fundo ligeiramente mais escuro no hover */
-            border-color: #A9A9A9 !important;     /* Borda mais escura no hover */
-            transform: translateY(-2px);           /* Pequeno efeito de flutuar */
-        }
-
-        /* 5. MANTER A CORREÇÃO DE TAMANHO DAS IMAGENS */
-        div[data-testid="stColumn"] img, img {
-            max-height: 230px !important;
-            height: 230px !important;
-            object-fit: contain !important;
-            width: 100% !important;
-            margin: 0 auto !important;
-            display: block !important;
-        }
-        
-        /* 6. AJUSTAR O ESPAÇAMENTO DO CONTEÚDO */
-        .block-container {
-            max-width: 600px !important;
-            padding-top: 2rem !important;
-        }
-        /* Customização do Campo de Busca */
-div[data-baseweb="input"] {
-    background-color: #FFFFFF !important;
-    border-radius: 25px !important; /* Deixa a barra de busca arredondada */
-    border: 2px solid #a8406b !important; /* Cor da borda combinando com o botão */
-}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-try:
-    from gerador import criar_imagem_produto
-
-    gerador_disponivel = True
-except Exception:
-    gerador_disponivel = False
-# Tenta carregar o gerador de imagens
-try:
-    from gerador import criar_imagem_produto
-
-    gerador_disponivel = True
-except Exception:
-    gerador_disponivel = False
-
-# Credenciais do GitHub
-GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", None)
-GITHUB_REPO = st.secrets.get("GITHUB_REPO", None)
-NOME_ARQUIVO = "produtos.json"
-
-st.cache_data.clear()
-
-
-# Função para carregar produtos
-def carregar_produtos():
-    if GITHUB_TOKEN and GITHUB_REPO:
-        try:
-            g = Github(GITHUB_TOKEN)
-            repo = g.get_repo(GITHUB_REPO)
-            conteudo = repo.get_contents(NOME_ARQUIVO, ref="main")
-            return json.loads(conteudo.decoded_content.decode("utf-8"))
-        except Exception:
-            return []
-    return []
-
-
-# Função para salvar produtos
-def salvar_produtos_github(lista_produtos):
-    if GITHUB_TOKEN and GITHUB_REPO:
-        try:
-            g = Github(GITHUB_TOKEN)
-            repo = g.get_repo(GITHUB_REPO)
-            novo_conteudo = json.dumps(
-                lista_produtos, indent=4, ensure_ascii=False
-            )
-            conteudo = repo.get_contents(NOME_ARQUIVO, ref="main")
-            repo.update_file(
-                conteudo.path,
-                "Atualiza lista de achadinhos",
-                novo_conteudo,
-                conteudo.sha,
-                branch="main",
-            )
-            st.cache_data.clear()
-            return True
-        except Exception:
-            return False
-    return False
-
-
 # ==============================================================================
-# 🛍️ VISÃO DO VISITANTE (PARTE PÚBLICA DO SITE)
+# 🛍️ VISÃO DO VISITANTE
 # ==============================================================================
 
-# 📌 TÍTULO PRINCIPAL DO SITE
-
+# 📌 TÍTULO PRINCIPAL E SUBTÍTULO REVERTIDOS E VISÍVEIS
 st.markdown(
-    "<p class='subtitulo' style='font-size: 16px; font-style: italic;'>Indicações"
-    " de leituras edificantes e utilidades com muito carinho! ✨</p>",
+    "<h1 class='titulo-principal'>Achadinhos da Cris</h1>",
     unsafe_allow_html=True,
 )
 
-# 📌 LINHA DIVISÓRIA (AZUL)
 st.markdown(
-    "<hr style='border: 0; height: 1px; background: #6C8EBF; margin: 20px"
-    " 0;'>",  # 👈 background: #6C8EBF define a cor azul da linha
+    "<p class='subtitulo'>Indicações de leituras edificantes e utilidades com muito carinho! ✨</p>",
     unsafe_allow_html=True,
 )
 
-produtos = carregar_produtos()
+# 📌 LINHA DIVISÓRIA
+st.markdown(
+    f"<hr style='border: 0; height: 1px; background: {COR_LINHA_DIVISORIA}; margin: 15px 0;'>",
+    unsafe_allow_html=True,
+)
 
 # ------------------------------------------------------------------------------
-# SE NÃO HOUVER PRODUTOS CADASTRADOS (MOSTRA O PRODUTO PADRÃO/SUGESTÃO)
+# LISTA DE PRODUTOS
 # ------------------------------------------------------------------------------
 if not produtos:
     st.markdown(
@@ -418,21 +337,17 @@ if not produtos:
         unsafe_allow_html=True,
     )
     st.markdown(
-        "<p class='preco-texto'>Apenas: R$ 38,75</p>", unsafe_allow_html=True
+        f"<p class='preco-texto'>Apenas: R$ 38,75</p>", unsafe_allow_html=True
     )
 
-    # 🔘 BOTÃO 1: Botão do produto padrão (Sugestão de Leitura)
     st.link_button(
-        label="👉 Ver Livro Perfeitamente Diferentes na Amazon",  # Texto no botão
+        label="👉 Ver Livro Perfeitamente Diferentes na Amazon",
         url="https://amazon.com.br",
         use_container_width=True,
     )
 
-# ------------------------------------------------------------------------------
-# SE HOUVER PRODUTOS CADASTRADOS (MOSTRA A LISTA DE PRODUTOS)
-# ------------------------------------------------------------------------------
 else:
-    for prod in reversed(produtos):
+    for prod in reversed(produtos_exibir):
         col_img, col_info = st.columns([1, 2])
 
         nome_img = prod.get("imagem_instagram", "")
@@ -470,34 +385,30 @@ else:
 
         with col_info:
             st.markdown(
-                f"<h4 style='text-align: left; color: #4A4A4A;"
-                f" margin-bottom: 5px;'>📖 {prod['titulo']}</h4>",
+                f"<h4 style='text-align: left; color: {COR_TEXTO_PRODUTO};"
+                f" font-weight: bold; margin-bottom: 5px;'>📖 {prod['titulo']}</h4>",
                 unsafe_allow_html=True,
             )
             st.markdown(
-                f"<p style='text-align: left; font-weight: bold; color:"
-                f" #2E7D32; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
+                f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
                 unsafe_allow_html=True,
             )
 
-            # 🔘 BOTÃO 2: Botão de compra de cada produto da lista
             link_perfeito = prod.get("link", "#")
             st.link_button(
-                label="👉 Ver na Amazon",  # Texto do botão de compra
+                label="👉 Ver na Amazon",
                 url=link_perfeito,
                 use_container_width=True,
             )
 
-        # 📌 LINHA DIVISÓRIA ENTRE PRODUTOS (ROSA)
         st.markdown(
-            "<hr style='border: 0; height: 1px; background: #6C8EBF; margin:"
-            " 15px 0;'>",  # 👈 background: #e60e0e define a cor rosa da linha
+            f"<hr style='border: 0; height: 1px; background: {COR_LINHA_DIVISORIA}; margin: 15px 0;'>",
             unsafe_allow_html=True,
         )
 
-# Rodapé explicativo
+# RODAPÉ
 st.markdown(
-    "<p class='rodape-texto' style='font-size: 12px; color: #e60e0e;'>Ao comprar"
+    f"<p class='rodape-texto' style='font-size: 12px;'>Ao comprar"
     " através dos links acima, eu ganho uma pequena comissão da Amazon."
     " 💕</p>",
     unsafe_allow_html=True,
