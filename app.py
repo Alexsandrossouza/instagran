@@ -412,12 +412,31 @@ else:
         nome_img = prod.get("imagem_instagram", "")
 
         with col_img:
-            # Puxa a imagem da pasta local do seu projeto
-            if nome_img and os.path.exists(nome_img):
-                st.image(nome_img, use_container_width=True)
+            nome_img = str(prod.get("imagem_instagram", "")).strip()
+
+            # Remove extensões antigas para testar todas
+            nome_base = os.path.splitext(nome_img)[0]
+
+            # Lista de extensões possíveis para a imagem
+            extensoes = [
+                f"{nome_base}.jpg",
+                f"{nome_base}.png",
+                f"{nome_base}.jpeg",
+                f"{nome_base}.webp",
+                nome_img,
+            ]
+
+            imagem_encontrada = None
+            for caminho in extensoes:
+                if caminho and os.path.exists(caminho):
+                    imagem_encontrada = caminho
+                    break
+
+            if imagem_encontrada:
+                st.image(imagem_encontrada, use_container_width=True)
             else:
                 st.image(
-                    "https://via.placeholder.com/400x400.png?text=Sem+Foto",
+                    "https://via.placeholder.com/300x300.png?text=Sem+Imagem",
                     use_container_width=True,
                 )
 
