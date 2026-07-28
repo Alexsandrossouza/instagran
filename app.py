@@ -35,6 +35,17 @@ st.markdown(
         background-color: {COR_FUNDO_SITE} !important;
     }}
 
+        /* TRAVA O PRIMEIRO CONTAINER (TÍTULO + BOTÕES + BUSCA) NO TOPO */
+        div[data-testid="stVerticalBlock"] > div:first-child {{
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 9999 !important;
+        background-color: #eb87ed !important; /* Cor de fundo para não ficar transparente */
+        padding-top: 10px !important;
+        padding-bottom: 5px !important;
+
+    }}
+
     /* 2. TÍTULO PRINCIPAL (Restaurado e com Destaque) */
     .titulo-principal {{
         color: {COR_TITULO_PRINCIPAL} !important;
@@ -184,7 +195,20 @@ def salvar_produtos_github(lista_produtos):
 produtos = carregar_produtos()
 
 # ==========================================
-# 👑 CABEÇALHO (ADMIN + WHATSAPP NO TOPO)
+# 👑 1º LUGAR: TÍTULO E SUBTÍTULO
+# ==========================================
+st.markdown(
+    "<h1 class='titulo-principal'>Achadinhos da Cris</h1>",
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    "<p class='subtitulo'>Indicações de leituras edificantes e utilidades com muito carinho! ✨</p>",
+    unsafe_allow_html=True,
+)
+
+# ==========================================
+# 🔘 2º LUGAR: BOTÕES (ADMIN + WHATSAPP)
 # ==========================================
 col_admin, col_whats = st.columns([1, 1])
 
@@ -197,95 +221,24 @@ with col_admin:
 with col_whats:
     numero_whatsapp = "5548988480217"
     mensagem = "Olá Cris! Vim pelo site e gostaria de tirar uma dúvida."
-
     link_wa = (
         f"https://wa.me/{numero_whatsapp}?text={mensagem.replace(' ', '%20')}"
     )
     st.link_button("💬 Falar no WhatsApp", link_wa, use_container_width=True)
 
 # ==========================================
-# 🔐 PAINEL DE ADMINISTRADOR
-# ==========================================
-if st.session_state.get("modo_admin", False):
-    st.info(" Área Restrita do Administrador")
-    senha = st.text_input(
-        "Digite sua senha de acesso:", type="password", key="senha_admin"
-    )
-
-    if senha == "cris123":
-        st.success("Acesso liberado!")
-
-        if produtos:
-            st.subheader("🗑️ Gerenciar/Apagar Produtos")
-            for i, prod in enumerate(produtos):
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.write(f"**{prod['titulo']}** - R$ {prod['preco']}")
-                with col2:
-                    if st.button("Apagar", key=f"del_{i}"):
-                        produtos.pop(i)
-                        salvar_produtos_github(produtos)
-                        st.toast("Item removido!")
-                        st.rerun()
-            st.markdown("<hr>", unsafe_allow_html=True)
-
-        st.subheader("➕ Adicionar Novo Achadinho")
-        with st.form("cadastro_produto", clear_on_submit=True):
-            novo_titulo = st.text_input("Título do Produto:")
-            novo_preco = st.text_input("Preço (Ex: 38,75):")
-            novo_asin = (
-                st.text_input("Código na Amazon (ASIN ou ISBN):")
-                .strip()
-                .replace(" ", "")
-            )
-            foto_upload = st.file_uploader(
-                "Escolha a foto:", type=["webp", "jpg", "jpeg", "png"]
-            )
-
-            botao_salvar = st.form_submit_button("Salvar Produto")
-
-            if botao_salvar and novo_titulo and novo_preco and novo_asin:
-                link_automatizado = f"https://www.amazon.com.br/dp/{novo_asin}?tag=abielstore-20"
-                nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
-
-                if foto_upload and gerador_disponivel:
-                    with open("temp_original.jpg", "wb") as f:
-                        f.write(foto_upload.getbuffer())
-                    try:
-                        criar_imagem_produto(
-                            caminho_produto="temp_original.jpg",
-                            titulo=novo_titulo,
-                            preco=f"R$ {novo_preco}",
-                            caminho_salvamento=nome_anuncio_final,
-                        )
-                    except Exception:
-                        pass
-
-                lista_atual = carregar_produtos()
-                novo_item = {
-                    "titulo": novo_titulo,
-                    "preco": novo_preco,
-                    "link": link_automatizado,
-                    "imagem_instagram": nome_anuncio_final,
-                    "asin": novo_asin,
-                }
-                lista_atual.append(novo_item)
-
-                if salvar_produtos_github(lista_atual):
-                    st.balloons()
-                    st.success("Produto cadastrado com sucesso!")
-                    st.rerun()
-    elif senha != "":
-        st.error("Senha incorreta!")
-
-# ==========================================
-# 🔍 BARRA DE BUSCA
+# 🔍 3º LUGAR: BARRA DE BUSCA
 # ==========================================
 termo_busca = st.text_input(
     label="Pesquise seu produto...",
     placeholder="Pesquise seu produto...",
     key="campoBusca",
     label_visibility="collapsed",
+)
+
+st.markdown(
+    f"<hr style='border: 0; height: 1px; background: {COR_LINHA_DIVISORIA}; margin: 15px 0;'>",
+    unsafe_allow_html=True,
 )
 
 # Filtra produtos
@@ -308,26 +261,50 @@ if termo_busca and not produtos_exibir:
     st.markdown("---")
 
 # ==============================================================================
-# 🛍️ VISÃO DO VISITANTE
+# 🛍️ VISÃO DO VISITANTE (CABEÇALHO FIXO)
 # ==============================================================================
 
-# 📌 TÍTULO PRINCIPAL E SUBTÍTULO REVERTIDOS E VISÍVEIS
-st.markdown(
-    "<h1 class='titulo-principal'>Achadinhos da Cris</h1>",
-    unsafe_allow_html=True,
-)
+# Encapsulamos tudo dentro de um container especial para travar tudo junto no topo
+with st.container():
+    # 📌 1º LUGAR: TÍTULO E SUBTÍTULO
+    st.markdown(
+        "<h1 class='titulo-principal'>Achadinhos da Cris</h1>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<p class='subtitulo'>Indicações de leituras edificantes e utilidades com muito carinho! ✨</p>",
+        unsafe_allow_html=True,
+    )
 
-st.markdown(
-    "<p class='subtitulo'>Indicações de leituras edificantes e utilidades com muito carinho! ✨</p>",
-    unsafe_allow_html=True,
-)
+    # 🔘 2º LUGAR: BOTÕES (ADMIN + WHATSAPP)
+    col_admin, col_whats = st.columns([1, 1])
+    with col_admin:
+        if st.button("🔐 Admin", key="btn_admin_topo"):
+            st.session_state["modo_admin"] = not st.session_state.get(
+                "modo_admin", False
+            )
 
-# 📌 LINHA DIVISÓRIA
-st.markdown(
-    f"<hr style='border: 0; height: 1px; background: {COR_LINHA_DIVISORIA}; margin: 15px 0;'>",
-    unsafe_allow_html=True,
-)
+    with col_whats:
+        numero_whatsapp = "5548988480217"
+        mensagem = "Olá Cris! Vim pelo site e gostaria de tirar uma dúvida."
+        link_wa = f"https://wa.me/{numero_whatsapp}?text={mensagem.replace(' ', '%20')}"
+        st.link_button(
+            "💬 Falar no WhatsApp", link_wa, use_container_width=True
+        )
 
+    # 🔍 3º LUGAR: BARRA DE BUSCA
+    termo_busca = st.text_input(
+        label="Pesquise seu produto...",
+        placeholder="Pesquise seu produto...",
+        key="campoBusca",
+        label_visibility="collapsed",
+    )
+
+    # Linha divisória após a busca
+    st.markdown(
+        f"<hr style='border: 0; height: 1px; background: {COR_LINHA_DIVISORIA}; margin: 15px 0;'>",
+        unsafe_allow_html=True,
+    )
 # ------------------------------------------------------------------------------
 # LISTA DE PRODUTOS
 # ------------------------------------------------------------------------------
