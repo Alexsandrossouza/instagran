@@ -262,7 +262,7 @@ if st.session_state.get("modo_admin", False):
         "Digite sua senha de acesso:", type="password", key="senha_admin"
     )
 
-    if senha == "cris123":
+    if senha == "crisamorim123":
         st.success("Acesso liberado!")
 
         if produtos:
