@@ -135,6 +135,18 @@ st.markdown(
         padding-left: 1rem !important;
         padding-right: 1rem !important;
     }}
+
+    /* IMAGENS - Exibe a foto completa de forma limpa */
+    div[data-testid="stColumn"] img, img {{
+        max-height: 220px !important;
+        height: auto !important;
+        object-fit: contain !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+        display: block !important;
+        border-radius: 10px !important;
+    }}
+
     </style>
 """,
     unsafe_allow_html=True,
@@ -394,38 +406,29 @@ if not produtos:
     )
 
 else:
+    
     for prod in reversed(produtos_exibir):
         col_img, col_info = st.columns([1, 2])
 
         nome_img = prod.get("imagem_instagram", "")
         asin = prod.get("asin", "")
 
-        if not asin and "anuncio_" in nome_img:
-            asin = (
-                nome_img.replace("anuncio_", "")
-                .replace(".jpg", "")
-                .replace(".png", "")
-                .replace(".webp", "")
-            )
-
         with col_img:
-            imagem_carregada = False
-
-            # 1. Tenta exibir a imagem oficial da Amazon pelo ASIN
-            if asin:
-                url_amazon = f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg"
-                st.image(url_amazon, use_container_width=True)
-                imagem_carregada = True
-
-            # 2. Se não tiver ASIN ou falhar, tenta usar a imagem local salva do Instagram
-            elif nome_img and os.path.exists(nome_img):
+            # 1ª Tentativa: Imagem salva na pasta (anuncio_ASIN.jpg ou foto customizada)
+            if nome_img and os.path.exists(nome_img):
                 st.image(nome_img, use_container_width=True)
-                imagem_carregada = True
 
-            # 3. Se não achar nenhuma das duas, coloca uma imagem padrão (fallback)
-            if not imagem_carregada:
+            # 2ª Tentativa: Se tiver ASIN, puxa a imagem da Amazon via CDN pública
+            elif asin:
                 st.image(
-                    "https://placehold.co/400x400/png?text=Sem+Imagem",
+                    f"https://images-na.ssl-images-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg",
+                    use_container_width=True,
+                )
+
+            # 3ª Tentativa: Imagem de aviso para não ficar em branco
+            else:
+                st.image(
+                    "https://via.placeholder.com/400x400.png?text=Sem+Foto",
                     use_container_width=True,
                 )
 
