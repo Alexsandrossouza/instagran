@@ -409,26 +409,16 @@ else:
             )
 
         with col_img:
-            imagem_exibida = False
+            asin = prod.get("asin")
+            foto_insta = prod.get("imagem_instagram")
 
-            if nome_img and os.path.exists(nome_img):
-                st.image(nome_img, use_container_width=True)
-                imagem_exibida = True
-
-            elif asin:
-                for arq in os.listdir("."):
-                    if asin in arq and arq.endswith(
-                        (".jpg", ".png", ".jpeg", ".webp")
-                    ):
-                        st.image(arq, use_container_width=True)
-                        imagem_exibida = True
-                        break
-
-            if not imagem_exibida and asin:
-                st.image(
-                    f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg",
-                    use_container_width=True,
-                )
+            # 1. Se tiver ASIN, puxa a foto limpa da Amazon
+            if asin:
+                st.image(f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg", use_container_width=True)
+            
+            # 2. Se não tiver ASIN, puxa a imagem do Instagram salva
+            elif foto_insta and os.path.exists(foto_insta):
+                st.image(foto_insta, use_container_width=True)
 
         with col_info:
             st.markdown(
