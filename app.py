@@ -12,7 +12,7 @@ COR_SUBTITULO = "#E7208D"  # Branco legível para as frases
 COR_TEXTO_PRODUTO = "#2C1B2E"  # Roxo escuro para o nome dos produtos
 COR_BOTOES = "#E7208D"  # Vinho/Rosa escuro dos botões e busca
 COR_BOTOES_HOVER = "#E7208D"  # Tom escuro do botão no hover
-COR_PRECO = "#FF0000"  # Verde limão chamativo
+COR_PRECO = "#0A0A0A"  # Verde limão chamativo
 COR_LINHA_DIVISORIA = "#6C8EBF"  # Azul das linhas
 COR_RODAPE = "#E7208D"  # Branco para o rodapé
 
@@ -439,7 +439,7 @@ else:
                 unsafe_allow_html=True,
             )
             st.markdown(
-                f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
+                f"<p class='preco-texto' style='text-align: left; margin-bottom: 14px;'>Apenas: R$ {prod['preco']}</p>",
                 unsafe_allow_html=True,
             )
 
