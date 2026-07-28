@@ -10,21 +10,24 @@ def criar_imagem_produto(caminho_produto, titulo, preco, caminho_salvamento):
     draw = ImageDraw.Draw(imagem_final)
     
     # 3. Abrir e redimensionar a imagem do produto
-    if not os.path.exists(caminho_produto):
-        print(f"Erro: A imagem {caminho_produto} não foi encontrada.")
-        return
-        
+    # 3. Abrir e redimensionar a imagem do produto (AUMENTANDO O TAMANHO)
     img_produto = Image.open(caminho_produto)
-    img_produto.thumbnail((600, 600))
+
+    # 🚀 Aumentamos de (600, 600) para (850, 700) para a imagem preencher bem a tela
+    img_produto.thumbnail((850, 700))
     largura_prod, altura_prod = img_produto.size
-    
+
+    # Centraliza horizontalmente e ajusta a altura para ficar perfeita entre os textos
     pos_x = (largura_canvas - largura_prod) // 2
-    pos_y = (altura_canvas - altura_prod) // 2 - 50
-    
-    if img_produto.mode in ('RGBA', 'LA'):
+    pos_y = (
+        largura_canvas - altura_prod
+    ) // 2 - 20  # Ajustado para não subir tanto
+
+    if img_produto.mode in ("RGBA", "LA"):
         imagem_final.paste(img_produto, (pos_x, pos_y), img_produto)
     else:
         imagem_final.paste(img_produto, (pos_x, pos_y))
+    
         
     # 4. Configurar as fontes para os textos
     try:
