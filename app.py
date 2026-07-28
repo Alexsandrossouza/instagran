@@ -120,26 +120,25 @@ st.markdown(
 
     /* IMAGENS - ZOOM PARA CORTAR A BORDA BRANCA */
     div[data-testid="stColumn"] img {{
-    max-height: 220px !important;
-    height: 220px !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    transform: scale(1.45) !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    display: block !important;
-    border-radius: 10px !important;
-}}
+        max-height: 220px !important;
+        height: 220px !important;
+        object-fit: cover !important;
+        object-position: center !important;
+        transform: scale(1.45) !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+        display: block !important;
+        border-radius: 10px !important;
+    }}
 
-div[data-testid="stColumn"] {{
-    overflow: hidden !important;
-    border-radius: 10px !important;
-
+    div[data-testid="stColumn"] {{
+        overflow: hidden !important;
+        border-radius: 10px !important;
     }}
     
     /* Ajusta a largura no PC mantendo perfeito no celular */
     .block-container {{
-        max-width: 1000px !important; /* Aumentado para expandir no computador */
+        max-width: 1000px !important;
         padding-top: 0.5rem !important;
         padding-left: 1rem !important;
         padding-right: 1rem !important;
@@ -232,7 +231,7 @@ with st.container():
     )
 
     # 🔘 2º: BOTÕES (ADMIN + WHATSAPP)
-    col_admin, col_whats = st.columns([3 , 1])
+    col_admin, col_whats = st.columns([3, 1])
 
     with col_admin:
         if st.button("🔐 Admin", key="btn_admin_topo"):
@@ -284,7 +283,6 @@ if st.session_state.get("modo_admin", False):
 
                 with col_edit:
                     if st.button("Editar", key=f"edit_btn_{i}"):
-                        # Alterna a exibição do formulário de edição do item
                         chave_edit = f"editando_{i}"
                         st.session_state[chave_edit] = not st.session_state.get(
                             chave_edit, False
@@ -297,7 +295,7 @@ if st.session_state.get("modo_admin", False):
                         st.toast("Item removido!")
                         st.rerun()
 
-                # 📝 FORMULÁRIO DE EDIÇÃO (Aparece ao clicar em Editar)
+                # 📝 FORMULÁRIO DE EDIÇÃO
                 if st.session_state.get(f"editando_{i}", False):
                     with st.form(f"form_editar_{i}"):
                         st.write(f"**Editando:** {prod['titulo']}")
@@ -307,26 +305,23 @@ if st.session_state.get("modo_admin", False):
                         edit_preco = st.text_input(
                             "Novo Preço:", value=prod.get("preco", "")
                         )
-                        #  Campo para o Link da Amazon
                         edit_asin = st.text_input(
-                         "Novo ASIN/ISBN AMAZON:", value=prod.get("asin", "")
-                         )
+                            "Novo ASIN/ISBN AMAZON:", value=prod.get("asin", "")
+                        )
 
-                         # 🟡 Campo para o Link do Mercado Livre
+                        # 🟡 Campo para o Link do Mercado Livre na edição
                         edit_ml = st.text_input(
-                           "Link do Mercado Livre (Opcional):", value=prod.get("link_ml", "")
+                            "Link do Mercado Livre (Opcional):", value=prod.get("link_ml", "")
                         )
 
                         if st.form_submit_button("💾 Salvar Alterações"):
-                         produtos[i]["titulo"] = edit_titulo
-                        produtos[i]["preco"] = edit_preco
-                        produtos[i]["asin"] = edit_asin
-                        produtos[i][
-                          "link"
-                           ] = f"https://www.amazon.com.br/dp/{edit_asin}?tag=abielstore-20"
-                        produtos[i]["link_ml"] = edit_ml  # 👈 COLE AQUI NA LINHA 327!
+                            produtos[i]["titulo"] = edit_titulo
+                            produtos[i]["preco"] = edit_preco
+                            produtos[i]["asin"] = edit_asin
+                            produtos[i]["link"] = f"https://www.amazon.com.br/dp/{edit_asin}?tag=abielstore-20"
+                            produtos[i]["link_ml"] = edit_ml
 
-                        if salvar_produtos_github(produtos):
+                            if salvar_produtos_github(produtos):
                                 st.session_state[f"editando_{i}"] = False
                                 st.success("Produto atualizado com sucesso!")
                                 st.rerun()
@@ -342,6 +337,9 @@ if st.session_state.get("modo_admin", False):
                 .strip()
                 .replace(" ", "")
             )
+            # 🟡 Novo campo do Mercado Livre no cadastro
+            novo_link_ml = st.text_input("Link do Mercado Livre (Opcional):")
+
             foto_upload = st.file_uploader(
                 "Escolha a foto:", type=["webp", "jpg", "jpeg", "png"]
             )
@@ -370,7 +368,8 @@ if st.session_state.get("modo_admin", False):
                     "titulo": novo_titulo,
                     "preco": novo_preco,
                     "link": link_automatizado,
-                   "imagem_instagram": f"{novo_asin}.jpg",  # 👈 Agora vai salvar a foto limpa e bonita!
+                    "link_ml": novo_link_ml,  # 👈 Salva o link do Mercado Livre no novo item
+                    "imagem_instagram": f"{novo_asin}.jpg",
                     "asin": novo_asin,
                 }
                 lista_atual.append(novo_item)
@@ -473,6 +472,15 @@ else:
                 url=link_perfeito,
                 use_container_width=True,
             )
+
+            # 🟡 Botão do Mercado Livre (exibe apenas se houver link cadastrado)
+            link_ml = prod.get("link_ml")
+            if link_ml:
+                st.link_button(
+                    label="🟡 Ver no Mercado Livre",
+                    url=link_ml,
+                    use_container_width=True,
+                )
 
 # RODAPÉ
 st.markdown(
