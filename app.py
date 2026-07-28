@@ -6,7 +6,7 @@ from github import Github
 # ==========================================
 # 🎨 PALETA DE CORES
 # ==========================================
-COR_FUNDO_SITE = "#e8b6e9"  # Lilás/Rosa do fundo
+COR_FUNDO_SITE = "#f1d8f1"  # Lilás/Rosa do fundo
 COR_TITULO_PRINCIPAL = "#E7208D"  # Branco em destaque para o título
 COR_SUBTITULO = "#E7208D"  # Branco legível para as frases
 COR_TEXTO_PRODUTO = "#2C1B2E"  # Roxo escuro para o nome dos produtos
@@ -51,7 +51,7 @@ st.markdown(
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
         font-weight: 900;
-        font-size: 32px !important;
+        font-size: 48px !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         margin-top: 5px;
         margin-bottom: 5px;
@@ -211,7 +211,7 @@ with st.container():
     )
 
     # 🔘 2º: BOTÕES (ADMIN + WHATSAPP)
-    col_admin, col_whats = st.columns([1, 2])
+    col_admin, col_whats = st.columns([3 , 1])
 
     with col_admin:
         if st.button("🔐 Admin", key="btn_admin_topo"):
