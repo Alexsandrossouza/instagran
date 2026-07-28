@@ -115,15 +115,9 @@ def salvar_produtos_github(produtos_lista):
 produtos = carregar_produtos()
 
 # ==========================================
-# 👑 CABEÇALHO COM BOTÃO DE ADMIN NO TOPO
+# 👑 CABEÇALHO (ADMIN + WHATSAPP NO TOPO)
 # ==========================================
-col_titulo, col_admin = st.columns([4, 1])
-
-with col_titulo:
-    st.markdown(
-        "<h1 class='titulo-principal'>Achadinhos da Cris</h1>",
-        unsafe_allow_html=True,
-    )
+col_admin, col_whats = st.columns([1, 1])
 
 with col_admin:
     if st.button("🔐 Admin", key="btn_admin_topo"):
@@ -131,11 +125,15 @@ with col_admin:
             "modo_admin", False
         )
 
-st.markdown(
-    "<p class='subtitulo'>Indicações de leituras edificantes e utilidades com muito carinho! ✨</p>",
-    unsafe_allow_html=True,
-)
+with col_whats:
+    # ⚠️ Troque pelo número real da Cris (Com DDD e 55 na frente)
+    numero_whatsapp = "5548988480217"
+    mensagem = "Olá Cris! Vim pelo site e gostaria de tirar uma dúvida."
 
+    link_wa = (
+        f"https://wa.me/{numero_whatsapp}?text={mensagem.replace(' ', '%20')}"
+    )
+    st.link_button("💬 Falar no WhatsApp", link_wa, use_container_width=True)
 # ==========================================
 # 🔐 PAINEL DE ADMINISTRADOR (Aparece se clicar no botão)
 # ==========================================
@@ -503,30 +501,4 @@ st.markdown(
     " através dos links acima, eu ganho uma pequena comissão da Amazon."
     " 💕</p>",
     unsafe_allow_html=True,
-)
-
-# ------------------------------------------------------------------------------
-# CONTATO DO WHATSAPP
-# ------------------------------------------------------------------------------
-st.markdown(
-    "<hr style='border: 0; height: 1px; background: #a8406b; margin: 20px"
-    " 0;'>",
-    unsafe_allow_html=True,
-)
-st.markdown(
-    "<p class='subtitulo' style='font-size: 14px;'>Ficou com alguma dúvida ou"
-    " quer bater um papo?</p>",
-    unsafe_allow_html=True,
-)
-
-NUMERO_WHATSAPP = "5548988480217"
-url_whatsapp = (
-    f"https://wa.me/{NUMERO_WHATSAPP}?text=Olá,%20Cris!%20Vi%20um%20produto%20no%20seu%20site%20e%20gostaria%20de%20tirar%20uma%20dúvida."
-)
-
-# 🔘 BOTÃO 3: Botão de redirecionamento para o WhatsApp
-st.link_button(
-    label="💬 Chamar a Cris no WhatsApp",  # Texto do botão do WhatsApp
-    url=url_whatsapp,
-    use_container_width=True,
 )

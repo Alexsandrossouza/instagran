@@ -7,7 +7,7 @@ st.set_page_config(page_title="Painel da Cris", page_icon="⚙️", layout="cent
 
 st.markdown("""
     <style>
-    .stApp { background-color: #FDFBF7; }
+    .stApp { background-color: #0a0a0a; }
     .titulo-principal, .secao-texto {
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
