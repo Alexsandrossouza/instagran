@@ -54,9 +54,10 @@ st.markdown(
         font-weight: bold !important;
     }
 
-    /* Regra para travar todas as fotos com a mesma altura padrão */
-    div[data-testid="stImage"] img {
-        height: 320px !important;
+    /* Força o container e a imagem a ficarem rigorosamente no mesmo tamanho */
+    [data-testid="stImage"], [data-testid="stImage"] > img, img {
+        max-height: 250px !important;
+        height: 250px !important;
         object-fit: contain !important;
         width: 100% !important;
     }
