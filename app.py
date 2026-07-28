@@ -38,20 +38,23 @@ st.markdown(
             text-align: center;
         }
 
-        /* 4. RESTAURAR ESTILO DOS BOTÕES (Borda e Fundo Claro) */
-        div[data-testid="stLinkButton"] > a {
-            background-color: ##a040c9 !important; /* Fundo branco/claro */
-            color: #4A4A4A !important;           /* Texto escuro */
-            border: 2px solid #D3D3D3 !important; /* Borda cinza clara */
-            border-radius: 10px !important;       /* Bordas arredondadas */
-            padding: 10px 20px !important;
-            font-weight: bold !important;
-            text-decoration: none !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            transition: all 0.3s ease !important;
-        }
+        /* FIX: Estilo bonito para os Botões (link_button e button) */
+    .stButton > button, div[data-testid="stLinkButton"] > a {
+        background-color: #a8406b !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    /* FIX: Efeito ao passar o mouse em cima (Hover) */
+    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
+        background-color: #8c3256 !important;
+        color: #FFFFFF !important;
+        border-color: transparent !important;
+        transform: scale(1.02);
+    }
 
         div[data-testid="stLinkButton"] > a:hover {
             background-color: #F0F0F0 !important; /* Fundo ligeiramente mais escuro no hover */
