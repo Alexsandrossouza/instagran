@@ -118,14 +118,23 @@ st.markdown(
         border-radius: 6px !important;
     }}
 
-    /* IMAGENS */
-    div[data-testid="stColumn"] img, img {{
-        max-height: 230px !important;
-        height: 230px !important;
-        object-fit: contain !important;
-        width: 100% !important;
-        margin: 0 auto !important;
-        display: block !important;
+    /* IMAGENS - ZOOM PARA CORTAR A BORDA BRANCA */
+    div[data-testid="stColumn"] img {{
+    max-height: 220px !important;
+    height: 220px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    transform: scale(1.45) !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    display: block !important;
+    border-radius: 10px !important;
+}}
+
+div[data-testid="stColumn"] {{
+    overflow: hidden !important;
+    border-radius: 10px !important;
+
     }}
     
     /* Ajusta a largura no PC mantendo perfeito no celular */
