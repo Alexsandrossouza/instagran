@@ -1,3 +1,7 @@
 git add .
 git commit -m "pagina inicial"
 git push origin main -f
+
+
+# alterar sem perder os anuncios 
+git pull

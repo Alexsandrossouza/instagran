@@ -12,57 +12,30 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Oculta as barras nativas do Streamlit */
-    header {visibility: hidden;}
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+        /* 1. MUDAR O TÍTULO PRINCIPAL PARA ROSA (Sem Amarelo!) */
+        .titulo-principal {
+            color: #f7208f !important;
+            text-align: center;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
 
-    .stApp { background-color: #d4aebe; }
-    .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
-        text-align: center;
-        font-family: 'Helvetica Neue', Arial, sans-serif;
-        color: #f7cf02 !important;
-    }
-    .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
-    .block-container { max-width: 500px !important; padding-top: 2rem !important; }
-    
-    .stButton > button, div[data-testid="stLinkButton"] > a {
-        background-color: #a8406b !important;
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 8px !important;
-        font-weight: bold !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
-        background-color: #8c3256 !important;
-        color: #FFFFFF !important;
-        border-color: transparent !important;
-        transform: scale(1.02);
-    }
+        /* 2. TEXTOS GERAIS (Subtítulo, seções, etc) */
+        .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
+            text-align: center;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
 
-    .stTextInput input {
-        background-color: #FFFFFF !important;
-        color: #333333 !important;
-        border: 1px solid #a8406b !important;
-        border-radius: 6px !important;
-    }
-
-    .stCheckbox label, .stTextInput label {
-        color: #4A4A4A !important;
-        font-weight: bold !important;
-    }
-
-    /* Força o container e a imagem a ficarem rigorosamente no mesmo tamanho */
-    [data-testid="stImage"], [data-testid="stImage"] > img, img {
-        max-height: 250px !important;
-        height: 250px !important;
-        object-fit: contain !important;
-        width: 100% !important;
-    }
+        /* 3. IGUALAR O TAMANHO DE TODAS AS IMAGENS */
+        div[data-testid="stColumn"] img, img {
+            max-height: 230px !important;
+            height: 230px !important;
+            object-fit: contain !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+            display: block !important;
+        }
     </style>
-""",
+    """,
     unsafe_allow_html=True,
 )
 
