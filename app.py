@@ -142,43 +142,50 @@ if not produtos:
     )
 else:
     for prod in reversed(produtos):
-        st.markdown(
-            f"<h3 class='secao-texto'>📖 {prod['titulo']}</h3>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            f"<p class='preco-texto'>Apenas: R$ {prod['preco']}</p>",
-            unsafe_allow_html=True,
-        )
+        # 1. Cria 2 colunas lado a lado: 1 para a Imagem (esquerda) e 2 para os Textos/Botão (direita)
+        col_img, col_info = st.columns([1, 2])
 
-        # 📸 Pega o ASIN salvo ou extrai do nome do anúncio
-        asin_produto = prod.get("asin", "")
-        if not asin_produto:
+        # --- COLUNA DA ESQUERDA: Apenas a Imagem ---
+        with col_img:
             nome_img = prod.get("imagem_instagram", "")
-            asin_produto = (
-                nome_img.replace("anuncio_", "")
-                .replace(".jpg", "")
-                .replace(".png", "")
+            asin = prod.get("asin", "")
+
+            # Prioridade 1: Imagem salva no GitHub via Upload
+            if nome_img and GITHUB_REPO:
+                url_imagem_github = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{nome_img}"
+                st.image(url_imagem_github, use_container_width=True)
+
+            # Prioridade 2: Imagem oficial da Amazon pelo ASIN
+            elif asin:
+                url_capa_amazon = f"https://m.media-amazon.com/images/P/{asin}.01._SCLZZZZZZZ_.jpg"
+                st.image(url_capa_amazon, use_container_width=True)
+
+        # --- COLUNA DA DIREITA: Título, Preço e Botão ---
+        with col_info:
+            st.markdown(
+                f"<h4 style='text-align: left; color: #4A4A4A;"
+                f" margin-bottom: 5px;'>📖 {prod['titulo']}</h4>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<p style='text-align: left; font-weight: bold; color:"
+                f" #2E7D32; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
+                unsafe_allow_html=True,
             )
 
-        # 1. Se existir o arquivo gerado localmente na pasta, exibe ele
-        nome_imagem = prod.get("imagem_instagram", "")
-        if nome_imagem and os.path.exists(nome_imagem):
-            st.image(nome_imagem, use_container_width=True)
+            link_perfeito = prod.get("link", "#")
+            st.link_button(
+                label="👉 Ver na Amazon",
+                url=link_perfeito,
+                use_container_width=True,
+            )
 
-        # 2. Caso contrário, puxa a capa oficial diretamente dos servidores da Amazon
-        elif asin_produto and len(asin_produto) >= 8:
-            url_capa_amazon = f"https://images-na.ssl-images-amazon.com/images/P/{asin_produto}.01.LZZZZZZZ.jpg"
-            st.image(url_capa_amazon, use_container_width=True)
-
-        # 🔗 Botão do Link
-        link_perfeito = prod.get("link", "#")
-        st.link_button(
-            label="👉 Ver na Amazon",
-            url=link_perfeito,
-            use_container_width=True,
+        # Linha divisória suave entre cada produto
+        st.markdown(
+            "<hr style='border: 0; height: 1px; background: #c299ab; margin:"
+            " 15px 0;'>",
+            unsafe_allow_html=True,
         )
-        st.markdown("<br>", unsafe_allow_html=True)
 
 
 st.markdown(
