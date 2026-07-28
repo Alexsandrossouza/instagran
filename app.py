@@ -369,7 +369,8 @@ if st.session_state.get("modo_admin", False):
                     "preco": novo_preco,
                     "link": link_automatizado,
                     "link_ml": novo_link_ml,  # 👈 Salva o link do Mercado Livre no novo item
-                    "imagem_instagram": f"anuncio_{novo_asin}.jpg",
+                    # 🟢 Substitua a linha 372 por esta:
+                    "imagem_instagram": f"anuncio_{novo_asin.replace('.jpg', '')}.jpg",
                     "asin": novo_asin,
                 }
                 lista_atual.append(novo_item)
