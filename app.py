@@ -16,7 +16,7 @@ st.markdown(
     .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
         text-align: center;
         font-family: 'Helvetica Neue', Arial, sans-serif;
-        color: #f5ed05 !important;
+        color: #f7cf02 !important;
     }
     .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
     .block-container { max-width: 500px !important; padding-top: 2rem !important; }
