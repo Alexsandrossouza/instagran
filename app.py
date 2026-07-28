@@ -21,118 +21,52 @@ st.set_page_config(
     page_title="Achadinhos da Cris", page_icon="📚", layout="centered"
 )
 
-# 2. Estilização CSS utilizando as referências de cores
 st.markdown(
-    f"""
+    """
     <style>
-    /* Oculta barras padrão do Streamlit */
-    header {{visibility: hidden;}}
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
-
-    /* 1. COR DE FUNDO */
-    .stApp {{
-        background-color: {COR_FUNDO_SITE} !important;
-    }}
-
-        /* TRAVA O PRIMEIRO CONTAINER (TÍTULO + BOTÕES + BUSCA) NO TOPO */
-        div[data-testid="stVerticalBlock"] > div:first-child {{
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 9999 !important;
-        background-color: #eb87ed !important; /* Cor de fundo para não ficar transparente */
-        padding-top: 10px !important;
-        padding-bottom: 5px !important;
-
-    }}
-
-    /* 2. TÍTULO PRINCIPAL (Restaurado e com Destaque) */
-    .titulo-principal {{
-        color: {COR_TITULO_PRINCIPAL} !important;
-        text-align: center;
-        font-family: 'Helvetica Neue', Arial, sans-serif;
-        font-weight: 800;
-        font-size: 32px !important;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        margin-top: 10px;
-        margin-bottom: 5px;
-    }}
-
-    /* 3. SUBTÍTULO E TEXTOS */
-    .subtitulo {{
-        text-align: center;
-        font-family: 'Helvetica Neue', Arial, sans-serif;
-        color: {COR_SUBTITULO} !important;
-        font-size: 16px !important;
-        font-style: italic;
-        font-weight: 600;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        margin-bottom: 15px;
-    }}
-
-    .secao-texto {{
-        text-align: center;
-        color: {COR_TEXTO_PRODUTO} !important;
-        font-weight: bold;
-    }}
+    /* Fundo da aplicação */
+    .stApp { background-color: #d4aebe; }
     
-    .preco-texto {{
-        color: {COR_PRECO} !important;
-        font-weight: 800 !important;
-        font-size: 18px !important;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-    }}
-
-    .rodape-texto {{
+    /* Textos principais */
+    .titulo-principal, .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
         text-align: center;
-        color: {COR_RODAPE} !important;
-        font-weight: 500;
-    }}
-
-    /* 4. BOTÕES */
-    .stButton > button, div[data-testid="stLinkButton"] > a {{
-        background-color: {COR_BOTOES} !important;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: #4A4A4A !important;
+    }
+    .preco-texto { font-weight: bold; color: #2E7D32 !important; margin-bottom: 5px; }
+    .block-container { max-width: 500px !important; padding-top: 2rem !important; }
+    
+    /* FIX: Estilo bonito para os Botões (link_button e button) */
+    .stButton > button, div[data-testid="stLinkButton"] > a {
+        background-color: #a8406b !important;
         color: #FFFFFF !important;
         border: none !important;
         border-radius: 8px !important;
         font-weight: bold !important;
         transition: all 0.3s ease !important;
-    }}
+    }
     
-    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {{
-        background-color: {COR_BOTOES_HOVER} !important;
+    /* FIX: Efeito ao passar o mouse em cima (Hover) */
+    .stButton > button:hover, div[data-testid="stLinkButton"] > a:hover {
+        background-color: #8c3256 !important;
         color: #FFFFFF !important;
         border-color: transparent !important;
         transform: scale(1.02);
-    }}
+    }
 
-    /* CAMPO DE BUSCA */
-    div[data-baseweb="input"] {{
-        background-color: #FFFFFF !important;
-        border-radius: 25px !important;
-        border: 2px solid {COR_BOTOES} !important;
-    }}
-
-    .stTextInput input {{
+    /* FIX: Estilo para os inputs de texto e senha */
+    .stTextInput input {
         background-color: #FFFFFF !important;
         color: #333333 !important;
+        border: 1px solid #a8406b !important;
         border-radius: 6px !important;
-    }}
+    }
 
-    /* IMAGENS */
-    div[data-testid="stColumn"] img, img {{
-        max-height: 230px !important;
-        height: 230px !important;
-        object-fit: contain !important;
-        width: 100% !important;
-        margin: 0 auto !important;
-        display: block !important;
-    }}
-    
-    .block-container {{
-        max-width: 600px !important;
-        padding-top: 1rem !important;
-    }}
+    /* FIX: Textos de Labels e Checkbox visíveis */
+    .stCheckbox label, .stTextInput label {
+        color: #4A4A4A !important;
+        font-weight: bold !important;
+    }
     </style>
 """,
     unsafe_allow_html=True,
