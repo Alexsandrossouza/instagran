@@ -12,20 +12,54 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-        /* 1. MUDAR O TÍTULO PRINCIPAL PARA ROSA (Sem Amarelo!) */
+        /* 1. RESTAURAR COR DE FUNDO (Lilás) */
+        .stApp {
+            background-color: #E6E6FA !important; /* Cor Lilás de fundo */
+        }
+
+        /* 2. RESTAURAR ESTILO DO TÍTULO (Rosa Choque) */
         .titulo-principal {
             color: #f7208f !important;
             text-align: center;
             font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-weight: bold;
         }
 
-        /* 2. TEXTOS GERAIS (Subtítulo, seções, etc) */
-        .subtitulo, .secao-texto, .rodape-texto, .preco-texto {
+        /* 3. TEXTOS GERAIS */
+        .subtitulo, .secao-texto, .rodape-texto {
             text-align: center;
             font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: #4A4A4A;
+        }
+        
+        .preco-texto {
+            color: #2E7D32 !important; /* Verde do preço */
+            font-weight: bold;
+            text-align: center;
         }
 
-        /* 3. IGUALAR O TAMANHO DE TODAS AS IMAGENS */
+        /* 4. RESTAURAR ESTILO DOS BOTÕES (Borda e Fundo Claro) */
+        div[data-testid="stLinkButton"] > a {
+            background-color: #FFFFFF !important; /* Fundo branco/claro */
+            color: #4A4A4A !important;           /* Texto escuro */
+            border: 2px solid #D3D3D3 !important; /* Borda cinza clara */
+            border-radius: 10px !important;       /* Bordas arredondadas */
+            padding: 10px 20px !important;
+            font-weight: bold !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.3s ease !important;
+        }
+
+        div[data-testid="stLinkButton"] > a:hover {
+            background-color: #F0F0F0 !important; /* Fundo ligeiramente mais escuro no hover */
+            border-color: #A9A9A9 !important;     /* Borda mais escura no hover */
+            transform: translateY(-2px);           /* Pequeno efeito de flutuar */
+        }
+
+        /* 5. MANTER A CORREÇÃO DE TAMANHO DAS IMAGENS */
         div[data-testid="stColumn"] img, img {
             max-height: 230px !important;
             height: 230px !important;
@@ -33,6 +67,12 @@ st.markdown(
             width: 100% !important;
             margin: 0 auto !important;
             display: block !important;
+        }
+        
+        /* 6. AJUSTAR O ESPAÇAMENTO DO CONTEÚDO */
+        .block-container {
+            max-width: 600px !important;
+            padding-top: 2rem !important;
         }
     </style>
     """,
