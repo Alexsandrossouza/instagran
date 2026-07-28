@@ -318,15 +318,15 @@ if st.session_state.get("modo_admin", False):
                         )
 
                         if st.form_submit_button("💾 Salvar Alterações"):
-                            produtos[i]["titulo"] = edit_titulo
-                            produtos[i]["preco"] = edit_preco
-                            produtos[i]["asin"] = edit_asin
-                            produtos[i][
-                                "link"
-                            ] = f"https://www.amazon.com.br/dp/{edit_asin}?tag=abielstore-20"
-                            
+                         produtos[i]["titulo"] = edit_titulo
+                        produtos[i]["preco"] = edit_preco
+                        produtos[i]["asin"] = edit_asin
+                        produtos[i][
+                          "link"
+                           ] = f"https://www.amazon.com.br/dp/{edit_asin}?tag=abielstore-20"
+                        produtos[i]["link_ml"] = edit_ml  # 👈 COLE AQUI NA LINHA 327!
 
-                            if salvar_produtos_github(produtos):
+                        if salvar_produtos_github(produtos):
                                 st.session_state[f"editando_{i}"] = False
                                 st.success("Produto atualizado com sucesso!")
                                 st.rerun()
