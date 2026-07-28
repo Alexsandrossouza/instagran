@@ -224,14 +224,14 @@ else:
 
         # 📌 LINHA DIVISÓRIA ENTRE PRODUTOS (ROSA)
         st.markdown(
-            "<hr style='border: 0; height: 1px; background: #a8406b; margin:"
-            " 15px 0;'>",  # 👈 background: #a8406b define a cor rosa da linha
+            "<hr style='border: 0; height: 1px; background: #6C8EBF; margin:"
+            " 15px 0;'>",  # 👈 background: #e60e0e define a cor rosa da linha
             unsafe_allow_html=True,
         )
 
 # Rodapé explicativo
 st.markdown(
-    "<p class='rodape-texto' style='font-size: 12px; color: #9A9A9A;'>Ao comprar"
+    "<p class='rodape-texto' style='font-size: 12px; color: #e60e0e;'>Ao comprar"
     " através dos links acima, eu ganho uma pequena comissão da Amazon."
     " 💕</p>",
     unsafe_allow_html=True,
