@@ -425,66 +425,59 @@ if not produtos:
     )
 
 else:
+    # Loop limpo focado em ler as fotos salvas na sua pasta local
     for prod in reversed(produtos_exibir):
-        col_img, col_info = st.columns([1, 2])
+        col_img, col_info = st.columns([1, 1.8])
 
-        nome_img = prod.get("imagem_instagram", "")
+        asin = str(prod.get("asin", "")).strip()
+        titulo = prod.get("titulo", "")
+        preco = prod.get("preco", "")
+        link_amazon = prod.get("link", f"https://amazon.com.br{asin}?tag=abielstore-20")
+        link_ml = prod.get("link_ml")
 
         with col_img:
-            nome_img = str(prod.get("imagem_instagram", "")).strip()
-
-            # Remove extensões antigas para testar todas
-            nome_base = os.path.splitext(nome_img)[0]
-
-            # Lista de extensões possíveis para a imagem
-            extensoes = [
-                f"{nome_base}.jpg",
-                f"{nome_base}.png",
-                f"{nome_base}.jpeg",
-                f"{nome_base}.webp",
-                nome_img,
-            ]
-
-            imagem_encontrada = None
-            for caminho in extensoes:
-                if caminho and os.path.exists(caminho):
-                    imagem_encontrada = caminho
-                    break
-
-            if imagem_encontrada:
-                st.image(imagem_encontrada, use_container_width=True)
+            # Define o nome esperado da imagem na pasta (ex: B0DFFTP71B.jpg)
+            # Caso o produto não tenha ASIN, tenta usar o campo antigo ou vai para o padrão
+            if asin:
+                nome_imagem_local = f"{asin}.jpg"
             else:
+                nome_imagem_local = prod.get("imagem_instagram", "placeholder.png")
+
+            # Verifica se o arquivo físico realmente existe na pasta do site
+            if os.path.exists(nome_imagem_local):
+                st.image(nome_imagem_local, use_container_width=True)
+            else:
+                # Se a imagem não for encontrada, usa um link padrão de segurança para não quebrar a tela
                 st.image(
-                    "https://via.placeholder.com/300x300.png?text=Sem+Imagem",
+                    "https://placeholder.com",
                     use_container_width=True,
                 )
 
         with col_info:
             st.markdown(
                 f"<h4 style='text-align: left; color: {COR_TEXTO_PRODUTO};"
-                f" font-weight: bold; margin-bottom: 5px;'>📖 {prod['titulo']}</h4>",
+                f" font-weight: bold; margin-bottom: 5px;'>📖 {titulo}</h4>",
                 unsafe_allow_html=True,
             )
             st.markdown(
-                f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
+                f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {preco}</p>",
                 unsafe_allow_html=True,
             )
 
-            link_perfeito = prod.get("link", "#")
             st.link_button(
                 label="👉 Ver na Amazon",
-                url=link_perfeito,
+                url=link_amazon,
                 use_container_width=True,
             )
 
-            # 🟡 Botão do Mercado Livre (exibe apenas se houver link cadastrado)
-            link_ml = prod.get("link_ml")
+            # Mantém o botão do Mercado Livre caso você preencha o link no cadastro
             if link_ml:
                 st.link_button(
                     label="🟡 Ver no Mercado Livre",
                     url=link_ml,
                     use_container_width=True,
                 )
+
 
 # RODAPÉ
 st.markdown(
