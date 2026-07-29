@@ -425,91 +425,60 @@ if not produtos:
     )
 
 else:
-    # Mantém a sua lógica de exibir os achadinhos mais recentes primeiro
-    for i, prod in enumerate(reversed(produtos_exibir)):
-        col_img, col_info = st.columns([1, 1.8])
+    for prod in reversed(produtos_exibir):
+        col_img, col_info = st.columns([1, 2])
 
-        asin = str(prod.get("asin", "")).strip()
-        titulo = prod.get("titulo", "")
-        preco = prod.get("preco", "")
-        link_amazon = prod.get("link", f"https://amazon.com.br{asin}?tag=abielstore-20")
-        link_ml = prod.get("link_ml")
+        nome_img = prod.get("imagem_instagram", "")
 
         with col_img:
-            # 🟢 PUXANDO IMAGENS ORIGINAIS (ALTA RESOLUÇÃO) DA AMAZON
-            # O parâmetro '_SL1000_' força o tamanho máximo da imagem no servidor deles.
-            # Variamos o final (IN71, IN61, IN51) para capturar os outros ângulos do produto automaticamente.
-            if asin:
-                lista_imagens = [
-                    f"https://ssl-images-amazon.com{asin}._SL1000_.jpg",
-                    f"https://ssl-images-amazon.com{asin}.IN71._SL1000_.jpg",
-                    f"https://ssl-images-amazon.com{asin}.IN61._SL1000_.jpg",
-                    f"https://ssl-images-amazon.com{asin}.IN51._SL1000_.jpg"
-                ]
+            nome_img = str(prod.get("imagem_instagram", "")).strip()
+
+            # Remove extensões antigas para testar todas
+            nome_base = os.path.splitext(nome_img)[0]
+
+            # Lista de extensões possíveis para a imagem
+            extensoes = [
+                f"{nome_base}.jpg",
+                f"{nome_base}.png",
+                f"{nome_base}.jpeg",
+                f"{nome_base}.webp",
+                nome_img,
+            ]
+
+            imagem_encontrada = None
+            for caminho in extensoes:
+                if caminho and os.path.exists(caminho):
+                    imagem_encontrada = caminho
+                    break
+
+            if imagem_encontrada:
+                st.image(imagem_encontrada, use_container_width=True)
             else:
-                lista_imagens = ["https://placeholder.com"]
-
-            # Convertemos a lista do Python para JSON para o JavaScript ler corretamente
-            imagens_json = json.dumps(lista_imagens)
-
-            # Injetamos o componente de Carrossel Automático usando HTML, CSS e JavaScript
-            html_carrossel = f"""
-            <div id="wrapper-{i}" style="width:100%; height:220px; display:flex; justify-content:center; align-items:center; overflow:hidden; background:#ffffff; border-radius:10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <img id="slider-img-{i}" src="{lista_imagens[0]}" style="max-width:100%; max-height:100%; object-fit:contain; transition: opacity 0.4s ease-in-out; opacity: 1;">
-            </div>
-
-            <script>
-                (function() {{
-                    const urlsOriginais = {imagens_json};
-                    let listaFinal = [urlsOriginais[0]]; // Começa garantindo a imagem principal ativa
-                    let indexAtual = 0;
-                    const elementoImg = document.getElementById("slider-img-{i}");
-
-                    // Testa em segundo plano se as fotos adicionais existem para evitar exibir links quebrados
-                    if(urlsOriginais.length > 1) {{
-                        for(let j = 1; j < urlsOriginais.length; j++) {{
-                            let teste = new Image();
-                            teste.onload = function() {{ listaFinal.push(urlsOriginais[j]); }};
-                            teste.src = urlsOriginais[j];
-                        }}
-                    }}
-
-                    // Configura a troca automática a cada 3 segundos (3000ms)
-                    setInterval(() => {{
-                        if(listaFinal.length > 1) {{
-                            elementoImg.style.opacity = 0; // Efeito fade-out suave
-                            setTimeout(() => {{
-                                indexAtual = (indexAtual + 1) % listaFinal.length;
-                                elementoImg.src = listaFinal[indexAtual];
-                                elementoImg.style.opacity = 1; // Efeito fade-in suave
-                            }}, 400);
-                        }}
-                    }}, 3000);
-                }})();
-            </script>
-            """
-            
-            # Renderiza o carrossel na coluna de imagem de forma leve usando a biblioteca nativa do Streamlit
-            st.components.v1.html(html_carrossel, height=230)
+                st.image(
+                    "https://via.placeholder.com/300x300.png?text=Sem+Imagem",
+                    use_container_width=True,
+                )
 
         with col_info:
             st.markdown(
                 f"<h4 style='text-align: left; color: {COR_TEXTO_PRODUTO};"
-                f" font-weight: bold; margin-bottom: 5px;'>📖 {titulo}</h4>",
+                f" font-weight: bold; margin-bottom: 5px;'>📖 {prod['titulo']}</h4>",
                 unsafe_allow_html=True,
             )
             st.markdown(
-                f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {preco}</p>",
+                f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {prod['preco']}</p>",
                 unsafe_allow_html=True,
             )
 
+            link_perfeito = prod.get("link", "#")
             st.link_button(
                 label="👉 Ver na Amazon",
-                url=link_amazon,
+                url=link_perfeito,
                 use_container_width=True,
             )
 
-            # 🟡 Botão do Mercado Livre (exibe apenas se houver link cadastrado no painel)
+            # 🟡 Botão do Mercado Livre (exibe apenas se houver link cadastrado)
+            link_ml = prod.get("link_ml")
             if link_ml:
                 st.link_button(
                     label="🟡 Ver no Mercado Livre",
@@ -517,11 +486,9 @@ else:
                     use_container_width=True,
                 )
 
-# ==============================================================================
-# 📝 RODAPÉ (Fora do loop, finalizando a página)
-# ==============================================================================
+# RODAPÉ
 st.markdown(
-    f"<p class='rodape-texto' style='font-size: 12px; text-align: center; margin-top: 30px;'>Ao comprar"
+    f"<p class='rodape-texto' style='font-size: 12px;'>Ao comprar"
     " através dos links acima, eu ganho uma pequena comissão da Amazon."
     " 💕</p>",
     unsafe_allow_html=True,
