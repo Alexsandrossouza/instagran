@@ -435,32 +435,40 @@ else:
         link_amazon = prod.get("link", f"https://amazon.com.br{asin}?tag=abielstore-20")
         link_ml = prod.get("link_ml")
 
+        # --- COLUNA DA ESQUERDA (IMAGEM) ---
         with col_img:
+            # Força o ASIN a ser lido como string limpa ou vazio se não existir
+            asin_str = str(asin).strip() if asin else ""
             
-         # 🟢 CORREÇÃO DEFINITIVA: Adiciona o "anuncio_" para bater com os arquivos da pasta Imagen
-            if asin:
-                nome_imagem_local = f"Imagen/anuncio_{asin}.jpg"
+            # Testa se o ASIN é válido e não é uma marcação de Mercado Livre vazia
+            if asin_str and not asin_str.startswith("anuncio_ml") and "placeholder" not in asin_str:
+                caminho_novo = f"Imagen/{asin_str}.jpg"
+                caminho_antigo = f"Imagen/anuncio_{asin_str}.jpg"
+                
+                if os.path.exists(caminho_novo):
+                    nome_imagem_local = caminho_novo
+                elif os.path.exists(caminho_antigo):
+                    nome_imagem_local = caminho_antigo
+                else:
+                    nome_imagem_local = caminho_novo
             else:
                 nome_backup = prod.get("imagem_instagram", "placeholder.png")
-                # Garante que busca a imagem na pasta correta mesmo se for Mercado Livre
-                if nome_backup.startswith("Imagen/"):
-                    nome_imagem_local = nome_backup
-                else:
-                    nome_imagem_local = f"Imagen/{nome_backup}"
+                nome_imagem_local = nome_backup if nome_backup.startswith("Imagen/") else f"Imagen/{nome_backup}"
 
+            # Remove espaços invisíveis que possam quebrar a leitura
+            nome_imagem_local = str(nome_imagem_local).strip()
 
-            # Verifica se o arquivo físico realmente existe na pasta do site
             if os.path.exists(nome_imagem_local):
                 st.image(nome_imagem_local, use_container_width=True)
             else:
-                # Se a imagem não for encontrada, usa um link padrão de segurança para não quebrar a tela
                 st.image(
                     "https://placeholder.com",
                     use_container_width=True,
                 )
 
-                with col_info:
-                  st.markdown(
+        # --- COLUNA DA DIREITA (INFORMAÇÕES E BOTÕES) ---
+        with col_info:
+            st.markdown(
                 f"<h4 style='text-align: left; color: {COR_TEXTO_PRODUTO};"
                 f" font-weight: bold; margin-bottom: 5px;'>📖 {titulo}</h4>",
                 unsafe_allow_html=True,
@@ -470,17 +478,16 @@ else:
                 unsafe_allow_html=True,
             )
 
-            # 🟢 PROTEÇÃO ANTI-AÇÃO:
-            # O site só cria o botão da Amazon se o campo ASIN NÃO estiver vazio e NÃO for nulo.
-            # Se você deixar o campo em branco no cadastro, o botão rosa não terá nenhuma ação e sumirá do site!
-            if asin and asin.strip() != "":
+            # 1. Botão da Amazon: Só aparece se o ASIN existir e NÃO for um código fictício do ML
+            asin_limpo = str(asin).strip() if asin else ""
+            if asin_limpo and not asin_limpo.startswith("anuncio_ml") and "placeholder" not in asin_limpo:
                 st.link_button(
                     label="👉 Ver na Amazon",
                     url=link_amazon,
                     use_container_width=True,
                 )
 
-            # Só exibe o botão do Mercado Livre se o link foi preenchido
+            # 2. Botão do Mercado Livre: Só aparece se o link do ML existir no banco de dados
             if link_ml and str(link_ml).strip() != "":
                 st.link_button(
                     label="🟡 Ver no Mercado Livre",
@@ -488,12 +495,11 @@ else:
                     use_container_width=True,
                 )
 
-
-
-# RODAPÉ
+# ==============================================================================
+# 📝 RODAPÉ (COLE NO FINAL DO ARQUIVO, FORA DO LOOP FOR)
+# ==============================================================================
 st.markdown(
-    f"<p class='rodape-texto' style='font-size: 12px;'>Ao comprar"
-    " através dos links acima, eu ganho uma pequena comissão da Amazon."
-    " 💕</p>",
+    f"<p class='rodape-texto' style='font-size: 12px; text-align: center; margin-top: 30px;'>Ao comprar"
+    " através dos links acima, eu ganho uma pequena comissão. 💕</p>",
     unsafe_allow_html=True,
 )
