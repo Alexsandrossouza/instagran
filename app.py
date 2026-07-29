@@ -438,10 +438,11 @@ else:
         with col_img:
             # Define o nome esperado da imagem na pasta (ex: B0DFFTP71B.jpg)
             # Caso o produto não tenha ASIN, tenta usar o campo antigo ou vai para o padrão
-            if asin:
-                nome_imagem_local = f"{asin}.jpg"
-            else:
-                nome_imagem_local = prod.get("imagem_instagram", "placeholder.png")
+         if asin:
+            nome_imagem_local = f"Imagen/{asin}.jpg"
+         else:
+            nome_backup = prod.get("imagem_instagram", "placeholder.png")
+            nome_imagem_local = nome_backup if nome_backup.startswith("Imagen/") else f"Imagen/{nome_backup}"
 
             # Verifica se o arquivo físico realmente existe na pasta do site
             if os.path.exists(nome_imagem_local):
