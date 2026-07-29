@@ -72,9 +72,13 @@ def criar_imagem_produto(caminho_produto, titulo, preco, caminho_salvamento):
         anchor="mm",
     )
 
-    # 7. Salvar a imagem final pronta para o Instagram
-    imagem_final.save(caminho_salvamento, "JPEG", quality=95)
-    print(f"Sucesso! Imagem salva em: {caminho_salvamento}")
+        # 7. Salvar a imagem final pronta para o Instagram dentro da pasta Imagen
+    # 🟢 CORREÇÃO DA FÓRMULA: Força o salvamento na pasta correta
+    caminho_final_pasta = f"Imagen/{caminho_salvamento}"
+    
+    imagem_final.save(caminho_final_pasta, "JPEG", quality=95)
+    print(f"Sucesso! Imagem salva em: {caminho_final_pasta}")
+
 
 
 # --- EXEMPLO DE TESTE LOCAL ---
