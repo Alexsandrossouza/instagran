@@ -436,13 +436,18 @@ else:
         link_ml = prod.get("link_ml")
 
         with col_img:
-            # Define o nome esperado da imagem na pasta (ex: B0DFFTP71B.jpg)
-            # Caso o produto não tenha ASIN, tenta usar o campo antigo ou vai para o padrão
-         if asin:
-            nome_imagem_local = f"Imagen/{asin}.jpg"
-         else:
-            nome_backup = prod.get("imagem_instagram", "placeholder.png")
-            nome_imagem_local = nome_backup if nome_backup.startswith("Imagen/") else f"Imagen/{nome_backup}"
+            
+         # 🟢 CORREÇÃO DEFINITIVA: Adiciona o "anuncio_" para bater com os arquivos da pasta Imagen
+            if asin:
+                nome_imagem_local = f"Imagen/anuncio_{asin}.jpg"
+            else:
+                nome_backup = prod.get("imagem_instagram", "placeholder.png")
+                # Garante que busca a imagem na pasta correta mesmo se for Mercado Livre
+                if nome_backup.startswith("Imagen/"):
+                    nome_imagem_local = nome_backup
+                else:
+                    nome_imagem_local = f"Imagen/{nome_backup}"
+
 
             # Verifica se o arquivo físico realmente existe na pasta do site
             if os.path.exists(nome_imagem_local):
