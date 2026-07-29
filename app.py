@@ -458,22 +458,21 @@ else:
                     "https://placeholder.com",
                     use_container_width=True,
                 )
-    with col_info:
-            # 1. Exibe o título do produto (Funciona tanto para Amazon quanto Mercado Livre)
-            st.markdown(
+
+                with col_info:
+                  st.markdown(
                 f"<h4 style='text-align: left; color: {COR_TEXTO_PRODUTO};"
                 f" font-weight: bold; margin-bottom: 5px;'>📖 {titulo}</h4>",
                 unsafe_allow_html=True,
             )
-            
-            # 2. Exibe o preço do produto
             st.markdown(
                 f"<p class='preco-texto' style='text-align: left; margin-bottom: 10px;'>Apenas: R$ {preco}</p>",
                 unsafe_allow_html=True,
             )
 
-            # 3. EXIBIÇÃO INTELIGENTE DOS BOTÕES:
-            # Se o ASIN existir de verdade (não for vazio), cria o botão automático da Amazon
+            # 🟢 PROTEÇÃO ANTI-AÇÃO:
+            # O site só cria o botão da Amazon se o campo ASIN NÃO estiver vazio e NÃO for nulo.
+            # Se você deixar o campo em branco no cadastro, o botão rosa não terá nenhuma ação e sumirá do site!
             if asin and asin.strip() != "":
                 st.link_button(
                     label="👉 Ver na Amazon",
@@ -481,14 +480,13 @@ else:
                     use_container_width=True,
                 )
 
-            # Se houver link do Mercado Livre cadastrado, exibe o botão amarelo na mesma coluna de informações
+            # Só exibe o botão do Mercado Livre se o link foi preenchido
             if link_ml and str(link_ml).strip() != "":
                 st.link_button(
                     label="🟡 Ver no Mercado Livre",
                     url=str(link_ml).strip(),
                     use_container_width=True,
                 )
-
 
 
 
