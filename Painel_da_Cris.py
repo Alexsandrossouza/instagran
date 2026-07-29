@@ -80,13 +80,16 @@ if senha == "cris123":
         novo_titulo = st.text_input("Título do Produto:")
         novo_preco = st.text_input("Preço (Ex: 38,75):")
         novo_asin = st.text_input("Código na Amazon (ASIN ou ISBN):").strip().replace(" ", "")
+         # 🟢 COLE ESSA LINHA AQUI NO SEU FORMULÁRIO:
+        novo_link_ml = st.text_input("Link do Mercado Livre (Opcional):").strip()
         foto_upload = st.file_uploader("Escolha a foto:", type=["webp", "jpg", "jpeg", "png"])
         botao_salvar = st.form_submit_button("Salvar Produto")
         
         if botao_salvar and novo_titulo and novo_preco and novo_asin:
             link_automatizado = f"https://amazon.com.br{novo_asin}?tag=abielstore-20"
             nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
-            
+
+                
             if foto_upload and gerador_disponivel:
                 with open("temp_original.jpg", "wb") as f:
                     f.write(foto_upload.getbuffer())
@@ -100,6 +103,33 @@ if senha == "cris123":
                     st.session_state["ultimo_anuncio"] = nome_anuncio_final
                 except Exception:
                     pass
+
+                                # =============================================================
+                # 🟢 BLOCO CORRIGIDO E SEM ERROS (SUBSTITUA AS LINHAS 111 A 121)
+                # =============================================================
+                
+                # Se você preencheu o campo do Mercado Livre, anula o link falso da Amazon
+                if novo_link_ml and novo_link_ml != "":
+                    link_automatizado = ""
+                
+                # Salva o seu dicionário estruturado no banco de dados
+                lista_atual = carregar_produtos()
+                novo_item = {
+                    "titulo": novo_titulo,
+                    "preco": novo_preco,
+                    "link": link_automatizado, 
+                    "link_ml": novo_link_ml,
+                    "asin": novo_asin,
+                    "imagem_instagram": nome_anuncio_final
+                }
+                lista_atual.append(novo_item)
+
+                if salvar_produtos_github(lista_atual):
+                    st.balloons()
+                    st.success("Produto cadastrado com sucesso!")
+                    st.rerun()
+
+
             
             lista_atual = carregar_produtos()
             novo_item = {
