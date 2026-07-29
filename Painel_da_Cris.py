@@ -83,11 +83,16 @@ if senha == "cris123":
          # 🟢 COLE ESSA LINHA AQUI NO SEU FORMULÁRIO:
         novo_link_ml = st.text_input("Link do Mercado Livre (Opcional):").strip()
         foto_upload = st.file_uploader("Escolha a foto:", type=["webp", "jpg", "jpeg", "png"])
-        botao_salvar = st.form_submit_button("Salvar Produto")
+ 
         
-        if botao_salvar and novo_titulo and novo_preco and novo_asin:
+        # Se tiver o ASIN, usa a sua automação original da Amazon
+        if novo_asin:
             link_automatizado = f"https://amazon.com.br{novo_asin}?tag=abielstore-20"
             nome_anuncio_final = f"anuncio_{novo_asin}.jpg"
+        else:
+            # Se for exclusivo do Mercado Livre, anula o link da Amazon e cria um nome padrão para a foto
+            link_automatizado = ""
+            nome_anuncio_final = f"anuncio_ml_{novo_preco.replace(',', '')}.jpg"
 
                 
             if foto_upload and gerador_disponivel:

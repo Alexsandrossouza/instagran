@@ -459,8 +459,8 @@ else:
                     use_container_width=True,
                 )
 
-        with col_info:
-            st.markdown(
+                with col_info:
+                  st.markdown(
                 f"<h4 style='text-align: left; color: {COR_TEXTO_PRODUTO};"
                 f" font-weight: bold; margin-bottom: 5px;'>📖 {titulo}</h4>",
                 unsafe_allow_html=True,
@@ -470,19 +470,24 @@ else:
                 unsafe_allow_html=True,
             )
 
-            st.link_button(
-                label="👉 Ver na Amazon",
-                url=link_amazon,
-                use_container_width=True,
-            )
-
-            # Mantém o botão do Mercado Livre caso você preencha o link no cadastro
-            if link_ml:
+            # 🟢 PROTEÇÃO ANTI-AÇÃO:
+            # O site só cria o botão da Amazon se o campo ASIN NÃO estiver vazio e NÃO for nulo.
+            # Se você deixar o campo em branco no cadastro, o botão rosa não terá nenhuma ação e sumirá do site!
+            if asin and asin.strip() != "":
                 st.link_button(
-                    label="🟡 Ver no Mercado Livre",
-                    url=link_ml,
+                    label="👉 Ver na Amazon",
+                    url=link_amazon,
                     use_container_width=True,
                 )
+
+            # Só exibe o botão do Mercado Livre se o link foi preenchido
+            if link_ml and str(link_ml).strip() != "":
+                st.link_button(
+                    label="🟡 Ver no Mercado Livre",
+                    url=str(link_ml).strip(),
+                    use_container_width=True,
+                )
+
 
 
 # RODAPÉ
